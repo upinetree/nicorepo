@@ -2,7 +2,7 @@ require 'nicorepo'
 require 'spec_helper'
 
 describe Nicorepo do
-  before do
+  before(:all) do
     @nicorepo = Nicorepo.new
     @account = account
 
@@ -51,18 +51,25 @@ describe Nicorepo do
   end
 
   describe Nicorepo::Log do
-    before do
-      @log = @nicorepo.all[0]
+    before(:all) do
+      @log = @nicorepo.all.first
+      p @log
     end
     
     it "should have the title" do
-      puts @log.title
       @log.title.should be_true
     end
 
     it "should have the url" do
-      puts @log.url
       @log.url.should be_true
+    end
+
+    it "should have the author" do
+      @log.author.should be_true
+    end
+
+    it "should have the log-kind" do
+      @log.kind.should be_true
     end
 
     after do
