@@ -30,8 +30,8 @@ class Nicorepo
     raise LoginError, "Failed to login" if page.header["x-niconico-authflag"] == '0'
   end
 
-  def all(max_logs = 20)
-    log_nodes = get_log_nodes(max_logs)
+  def all(req_num = 20)
+    log_nodes = get_log_nodes(req_num)
 
     logs = log_nodes.map do |node|
       log = Log.new
@@ -46,14 +46,13 @@ class Nicorepo
 
   private
 
-  def get_log_nodes(max, url = URL::REPO_ALL)
+  def get_log_nodes(req_num, url = URL::REPO_ALL)
     page = @agent.get(url)
     nodes = page.search('div.timeline/div.log')
 
-    # it should not be called 'max' ?
-    if nodes.size > max then
-      nodes = nodes[0, max]
-    elsif nodes.size < max then
+    if nodes.size > req_num then
+      nodes = nodes[0, req_num]
+    elsif nodes.size < req_num then
       next_url = page.search('div.next-page/a').first['href']
       nodes = nodes + get_log_nodes(max - nodes.size, next_url)
     end
