@@ -27,8 +27,12 @@ describe Nicorepo do
   describe "#all" do
     context "without arguments" do
       it "should return 20 logs" do
-        # @nicorepo.all.size.should eq 20
         @nicorepo.all.should have(20).logs
+      end
+    end
+    context "with 5" do
+      it "should return 5 logs" do
+        @nicorepo.all(5).should have(5).logs
       end
     end
   end

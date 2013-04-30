@@ -34,6 +34,8 @@ class Nicorepo
     page = @agent.get(URL::REPO_ALL)
     log_nodes = page.search('div.timeline/div.log')
 
+    log_nodes = log_nodes[0, max_logs] if log_nodes.size > max_logs
+
     logs = log_nodes.map do |node|
       log = Log.new
       log.title = parse_title node
