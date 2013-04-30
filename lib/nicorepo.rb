@@ -7,6 +7,16 @@ class Nicorepo
     REPO_ALL = 'http://rd.nicovideo.jp/cc/my/zerotopall'
   end
 
+  class Log
+    attr_accessor :title
+
+    def initialize
+      @title = nil
+    end
+  end
+
+  class LoginError < StandardError; end
+
   attr_reader :agent
 
   def initialize
@@ -20,11 +30,15 @@ class Nicorepo
   end
 
   def all
-    @agent.get(URL::REPO_ALL)
+    page = @agent.get(URL::REPO_ALL)
+    timeline = page.parser.css("div[class='timeline']")
 
-    Array.new(20, nil)
+    parsed_items = timeline.css("div[class*='log-target-info']")
+    parsed_items.xpath("./a").map do |t|
+      log = Log.new
+      log.title = t.inner_text
+      log
+    end
   end
-
-  class LoginError < StandardError; end
 
 end
