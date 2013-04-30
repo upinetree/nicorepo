@@ -8,10 +8,11 @@ class Nicorepo
   end
 
   class Log
-    attr_accessor :title
+    attr_accessor :title, :url
 
     def initialize
       @title = nil
+      @url   = nil
     end
   end
 
@@ -29,26 +30,33 @@ class Nicorepo
     raise LoginError, "Failed to login" if page.header["x-niconico-authflag"] == '0'
   end
 
-  def all
+  def all(max_logs = 20)
     page = @agent.get(URL::REPO_ALL)
-    timeline = page.parser.css("div[class='timeline']")
+    timeline = page.search('div.timeline')
 
     titles = parse_titles(timeline)
-    titles.map do |t|
-      log = Log.new
-      log.title = t
-      log
+    urls   = parse_urls(timeline)
+
+    logs = Array.new(max_logs, nil).map!{ Log.new }
+    logs.each_index do |i|
+      logs[i].title = titles[i]
+      logs[i].url   = urls[i]
     end
+
+    return logs
   end
 
 
   private
 
   def parse_titles(timeline)
-    parsed_items = timeline.css("div[class*='log-target-info']")
-    parsed_items.xpath("./a").map do |t|
-      t.inner_text
-    end
+    nodes = timeline.search('div.log-target-info/a')
+    nodes.map{ |n| n.inner_text }
+  end
+
+  def parse_urls(timeline)
+    nodes = timeline.search('div.log-target-info/a')
+    nodes.map{ |n| n['href'] }
   end
 
 end

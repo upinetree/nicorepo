@@ -43,7 +43,12 @@ describe Nicorepo do
       @log.title.should be_true
     end
 
-    after do
+    it "should have the url" do
+      puts @log.url
+      @log.url.should be_true
+    end
+
+   after do
     end
   end
 
