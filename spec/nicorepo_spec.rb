@@ -42,6 +42,12 @@ describe Nicorepo do
         @nicorepo.all(30).should have(30).logs
       end
     end
+
+    context "with 50" do
+      it "should return 50 logs" do
+        @nicorepo.all(50).should have(50).logs
+      end
+    end
   end
 
   describe Nicorepo::Log do
