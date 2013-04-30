@@ -31,10 +31,7 @@ class Nicorepo
   end
 
   def all(max_logs = 20)
-    page = @agent.get(URL::REPO_ALL)
-    log_nodes = page.search('div.timeline/div.log')
-
-    log_nodes = log_nodes[0, max_logs] if log_nodes.size > max_logs
+    log_nodes = get_log_nodes(max_logs)
 
     logs = log_nodes.map do |node|
       log = Log.new
@@ -48,6 +45,21 @@ class Nicorepo
 
 
   private
+
+  def get_log_nodes(max, url = URL::REPO_ALL)
+    page = @agent.get(url)
+    nodes = page.search('div.timeline/div.log')
+
+    # it should not be called 'max' ?
+    if nodes.size > max then
+      nodes = nodes[0, max]
+    elsif nodes.size < max then
+      next_url = page.search('div.next-page/a').first['href']
+      nodes = nodes + get_log_nodes(max - nodes.size, next_url)
+    end
+
+    return nodes
+  end
 
   def parse_title(log_node)
     log_node.search('div.log-target-info/a').first.inner_text
