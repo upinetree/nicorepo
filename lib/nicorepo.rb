@@ -33,11 +33,21 @@ class Nicorepo
     page = @agent.get(URL::REPO_ALL)
     timeline = page.parser.css("div[class='timeline']")
 
+    titles = parse_titles(timeline)
+    titles.map do |t|
+      log = Log.new
+      log.title = t
+      log
+    end
+  end
+
+
+  private
+
+  def parse_titles(timeline)
     parsed_items = timeline.css("div[class*='log-target-info']")
     parsed_items.xpath("./a").map do |t|
-      log = Log.new
-      log.title = t.inner_text
-      log
+      t.inner_text
     end
   end
 
