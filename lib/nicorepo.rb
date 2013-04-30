@@ -32,15 +32,13 @@ class Nicorepo
 
   def all(max_logs = 20)
     page = @agent.get(URL::REPO_ALL)
-    timeline = page.search('div.timeline')
+    log_nodes = page.search('div.timeline/div.log')
 
-    titles = parse_titles(timeline)
-    urls   = parse_urls(timeline)
-
-    logs = Array.new(max_logs, nil).map!{ Log.new }
-    logs.each_index do |i|
-      logs[i].title = titles[i]
-      logs[i].url   = urls[i]
+    logs = log_nodes.map do |node|
+      log = Log.new
+      log.title = parse_title node
+      log.url   = parse_url   node
+      log
     end
 
     return logs
@@ -49,14 +47,12 @@ class Nicorepo
 
   private
 
-  def parse_titles(timeline)
-    nodes = timeline.search('div.log-target-info/a')
-    nodes.map{ |n| n.inner_text }
+  def parse_title(log_node)
+    log_node.search('div.log-target-info/a').first.inner_text
   end
 
-  def parse_urls(timeline)
-    nodes = timeline.search('div.log-target-info/a')
-    nodes.map{ |n| n['href'] }
+  def parse_url(log_node)
+    log_node.search('div.log-target-info/a').first['href']
   end
 
 end
