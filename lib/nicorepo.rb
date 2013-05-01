@@ -77,15 +77,9 @@ class Nicorepo
   end
 
   def parse_kind(node)
-    case node['class']
-    when /video-upload/       then 'video'
-    when /live-broadcast/     then 'live'
-    when /seiga-image-upload/ then 'seiga'
-    when /mylist-add/         then 'mylisted'
-    when /clip/               then 'clip'
-    when /register-chblog/    then 'blog'
-    else 'other'
-    end
+    cls = node['class']
+    index = cls.index(/(user|community)\-/)
+    cls[index..cls.size]
   end
 
 end
