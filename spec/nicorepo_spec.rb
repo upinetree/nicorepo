@@ -66,6 +66,10 @@ describe Nicorepo do
       p @log
     end
     
+    it "should have the body" do
+      @log.body.should be_true
+    end
+
     it "should have the title" do
       @log.title.should be_true
     end

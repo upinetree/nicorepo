@@ -8,9 +8,10 @@ class Nicorepo
   end
 
   class Log
-    attr_accessor :title, :url, :author, :kind
+    attr_accessor :body, :title, :url, :author, :kind
 
     def initialize
+      @body   = nil
       @title  = nil
       @url    = nil
       @author = nil
@@ -27,6 +28,7 @@ class Nicorepo
   def initialize
     @agent = Mechanize.new
     @agent.ssl_version = 'SSLv3'
+    @agent.request_headers = { 'accept-language' => 'ja-JP', 'content-language' => 'ja-JP' }
   end
 
   def login(mail, pass)
@@ -39,6 +41,7 @@ class Nicorepo
 
     logs = log_nodes.map do |node|
       log = Log.new
+      log.body   = parse_body   node
       log.title  = parse_title  node
       log.url    = parse_url    node
       log.author = parse_author node
@@ -72,6 +75,10 @@ class Nicorepo
     return nodes
   end
 
+  def parse_body(node)
+    node.search('div.log-body').first.inner_text.gsub(/(\t|\r|\n)/, "")
+  end
+
   def parse_title(node)
     node.search('div.log-target-info/a').first.inner_text
   end
@@ -84,6 +91,7 @@ class Nicorepo
     node.search('div.log-body/a').first.inner_text
   end
 
+  # example: 'log.log-community-video-upload' -> 'video-upload'
   def parse_kind(node)
     cls = node['class']
     index = cls.index(/(user|community)\-/)
