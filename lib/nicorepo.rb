@@ -8,7 +8,7 @@ class Nicorepo
   end
 
   class Log
-    attr_accessor :body, :target, :url, :author, :kind
+    attr_accessor :body, :target, :url, :author, :kind, :date
 
     def initialize
       @body   = nil
@@ -16,6 +16,7 @@ class Nicorepo
       @url    = nil
       @author = nil
       @kind   = nil
+      @date   = nil
     end
   end
 
@@ -58,6 +59,7 @@ class Nicorepo
       log.url    = parse_url    node
       log.author = parse_author node
       log.kind   = parse_kind   node
+      log.date   = parse_date   node
       log
     end
     logs.select!{ |log| log.kind =~ /#{filter}/ } if filter
@@ -99,6 +101,11 @@ class Nicorepo
     cls = node['class']
     index = cls.index(/(user|community)\-/)
     cls[index..cls.size]
+  end
+
+  def parse_date(node)
+    d = node.search('div.log-footer/a.log-footer-date/time').first['datetime']
+    Time.xmlschema(d).localtime
   end
 
 end

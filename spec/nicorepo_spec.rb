@@ -51,17 +51,15 @@ describe Nicorepo do
   end
 
   describe "#videos" do
-    context "when videos are existing on timeline" do
+    context "without arguments" do
+      it "should return 3 logs at the most" do
+        @nicorepo.videos.should have_at_most(3).logs
+      end
+
       it "should return only video logs" do
         videos = @nicorepo.videos
         rejected = videos.reject{ |v| v.kind =~ /video/ }
         rejected.size.should eq 0
-      end
-    end
-
-    context "without arguments" do
-      it "should return 3 logs at the most" do
-        @nicorepo.videos.should have_at_most(3).logs
       end
     end
 
@@ -96,6 +94,10 @@ describe Nicorepo do
 
     it "should have the log-kind" do
       @log.kind.should be_true
+    end
+
+    it "should have the date" do
+      @log.date.should be_true
     end
 
     after do
