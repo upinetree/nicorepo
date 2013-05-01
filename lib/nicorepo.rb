@@ -20,6 +20,8 @@ class Nicorepo
 
   class LoginError < StandardError; end
 
+  LOGS_PER_PAGE = 20
+
   attr_reader :agent
 
   def initialize
@@ -32,7 +34,7 @@ class Nicorepo
     raise LoginError, "Failed to login" if page.header["x-niconico-authflag"] == '0'
   end
 
-  def all(req_num = 20)
+  def all(req_num = LOGS_PER_PAGE)
     log_nodes = get_log_nodes(req_num)
 
     logs = log_nodes.map do |node|
@@ -47,6 +49,12 @@ class Nicorepo
     return logs
   end
 
+  def videos(page_max = 3)
+    logs = all(page_max * LOGS_PER_PAGE)
+    logs.select!{ |log| log.kind =~ /video-upload/ }
+
+    return logs
+  end
 
   private
 

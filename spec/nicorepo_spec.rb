@@ -50,6 +50,16 @@ describe Nicorepo do
     end
   end
 
+  describe "#videos" do
+    context "when videos are existing on timeline" do
+      it "should return only video logs" do
+        videos = @nicorepo.videos
+        rejected = videos.reject{ |v| v.kind =~ /video/ }
+        rejected.size.should eq 0
+      end
+    end
+  end
+
   describe Nicorepo::Log do
     before(:all) do
       @log = @nicorepo.all.first
