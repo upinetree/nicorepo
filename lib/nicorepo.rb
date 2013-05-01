@@ -37,9 +37,21 @@ class Nicorepo
   end
 
   def all(req_num = LOGS_PER_PAGE)
-    log_nodes = get_log_nodes(req_num)
+    page_nest_max = req_num / LOGS_PER_PAGE + 1
+    get_logs(req_num, page_nest_max)
+  end
 
-    logs = log_nodes.map do |node|
+  def videos(req_num = 3, page_nest_max = 5)
+    get_logs(req_num, page_nest_max, 'video-upload')
+  end
+
+  private
+
+  def get_logs(req_num, page_nest_max, filter = nil, url = URL::REPO_ALL)
+    return [] unless page_nest_max > 0
+
+    page = @agent.get(url)
+    logs = log_nodes(page).map do |node|
       log = Log.new
       log.body   = parse_body   node
       log.target = parse_target node
@@ -48,31 +60,22 @@ class Nicorepo
       log.kind   = parse_kind   node
       log
     end
+    logs.select!{ |log| log.kind =~ /#{filter}/ } if filter
 
-    return logs
-  end
-
-  def videos(page_max = 3)
-    logs = all(page_max * LOGS_PER_PAGE)
-    logs.select!{ |log| log.kind =~ /video-upload/ }
-
-    return logs
-  end
-
-  private
-
-  def get_log_nodes(req_num, url = URL::REPO_ALL)
-    page = @agent.get(url)
-    nodes = page.search('div.timeline/div.log')
-
-    if nodes.size > req_num then
-      nodes = nodes[0, req_num]
-    elsif nodes.size < req_num then
-      next_url = page.search('div.next-page/a').first['href']
-      nodes = nodes + get_log_nodes(req_num - nodes.size, next_url)
+    if logs.size > req_num then
+      return logs[0, req_num]
     end
 
-    return nodes
+    if logs.size < req_num then
+      next_url = page.search('div.next-page/a').first['href']
+      logs += get_logs(req_num - logs.size, page_nest_max - 1, filter, next_url)
+    end
+
+    return logs
+  end
+
+  def log_nodes(page)
+    page.search('div.timeline/div.log')
   end
 
   def parse_body(node)

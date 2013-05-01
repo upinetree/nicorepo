@@ -58,6 +58,18 @@ describe Nicorepo do
         rejected.size.should eq 0
       end
     end
+
+    context "without arguments" do
+      it "should return 3 logs at the most" do
+        @nicorepo.videos.should have_at_most(3).logs
+      end
+    end
+
+    context "with req_num = 5, page_nest_max = 3" do
+      it "should return 5 logs at the most" do
+        @nicorepo.videos(5, 3).should have_at_most(5).logs
+      end
+    end
   end
 
   describe Nicorepo::Log do
