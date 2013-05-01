@@ -70,8 +70,8 @@ describe Nicorepo do
       @log.body.should be_true
     end
 
-    it "should have the title" do
-      @log.title.should be_true
+    it "should have the target" do
+      @log.target.should be_true
     end
 
     it "should have the url" do

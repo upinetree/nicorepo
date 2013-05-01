@@ -8,11 +8,11 @@ class Nicorepo
   end
 
   class Log
-    attr_accessor :body, :title, :url, :author, :kind
+    attr_accessor :body, :target, :url, :author, :kind
 
     def initialize
       @body   = nil
-      @title  = nil
+      @target = nil
       @url    = nil
       @author = nil
       @kind   = nil
@@ -42,7 +42,7 @@ class Nicorepo
     logs = log_nodes.map do |node|
       log = Log.new
       log.body   = parse_body   node
-      log.title  = parse_title  node
+      log.target = parse_target node
       log.url    = parse_url    node
       log.author = parse_author node
       log.kind   = parse_kind   node
@@ -79,7 +79,7 @@ class Nicorepo
     node.search('div.log-body').first.inner_text.gsub(/(\t|\r|\n)/, "")
   end
 
-  def parse_title(node)
+  def parse_target(node)
     node.search('div.log-target-info/a').first.inner_text
   end
 
