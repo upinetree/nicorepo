@@ -96,10 +96,15 @@ class Nicorepo
     node.search('div.log-body/a').first.inner_text
   end
 
-  # example: 'log.log-community-video-upload' -> 'video-upload'
+  # example: 'log.log-community-video-upload' -> 'community-video-upload'
   def parse_kind(node)
     cls = node['class']
-    index = cls.index(/(user|community)\-/)
+    trim = 'log-'
+
+    index = cls.index(/#{trim}/)
+    return cls if index.nil?
+
+    index += trim.size
     cls[index..cls.size]
   end
 
