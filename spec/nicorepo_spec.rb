@@ -58,8 +58,8 @@ describe Nicorepo do
 
       it "should return only video logs" do
         videos = @nicorepo.videos
-        rejected = videos.reject{ |v| v.kind =~ /video/ }
-        rejected.size.should eq 0
+        except_video = videos.reject{ |v| v.kind =~ /video/ }
+        except_video.size.should eq 0
       end
     end
 
@@ -67,6 +67,14 @@ describe Nicorepo do
       it "should return 5 logs at the most" do
         @nicorepo.videos(5, 3).should have_at_most(5).logs
       end
+    end
+  end
+
+  describe "#lives" do
+    it "should return only live logs" do
+      lives = @nicorepo.lives
+      except_live = lives.reject{ |l| l.kind =~ /live/ }
+      except_live.size.should eq 0
     end
   end
 
@@ -100,10 +108,10 @@ describe Nicorepo do
       @log.date.should be_true
     end
 
-    after do
+    after(:all) do
     end
   end
 
-  after do
+  after(:all) do
   end
 end
