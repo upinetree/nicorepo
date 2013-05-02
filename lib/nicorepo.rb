@@ -43,14 +43,18 @@ class Nicorepo
   end
 
   def videos(req_num = 3, page_nest_max = 5)
-    get_logs(req_num, page_nest_max, 'video-upload')
+    filtered_by('video-upload', req_num, page_nest_max)
   end
 
   def lives(req_num = 3, page_nest_max = 5)
-    get_logs(req_num, page_nest_max, 'live')
+    filtered_by('live', req_num, page_nest_max)
   end
 
- private
+  def filtered_by(filter, req_num = LOGS_PER_PAGE, page_nest_max = 1)
+    get_logs(req_num, page_nest_max, filter)
+  end
+
+  private
 
   def get_logs(req_num, page_nest_max, filter = nil, url = URL::REPO_ALL)
     return [] unless page_nest_max > 0
