@@ -122,3 +122,5 @@ class Nicorepo
   end
 
 end
+
+require_relative 'nicorepo/cli.rb'
