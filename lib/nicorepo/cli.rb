@@ -45,8 +45,8 @@ class Nicorepo
           disp @logs
         else
           case cmd
-          when 'open' then open_url(@logs, num)
-          when 'exit' then return true
+          when 'open', 'o' then open_url(@logs, num)
+          when 'exit'      then return true
           else help_interactive; next
           end
         end
@@ -125,6 +125,7 @@ class Nicorepo
       puts '    usage: command [params]'
       puts '    command:'
       help_commands
+      puts '        open, o [log_num] - open url of given log number'
       puts '        exit'
     end
 
