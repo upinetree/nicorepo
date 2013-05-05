@@ -22,7 +22,7 @@ class Nicorepo
         nest = (argv.shift ||  3).to_i
         logs = repo.lives  num, nest
         disp logs if logs
-      when '-i'     then interactive_run(repo)
+      when 'i'     then interactive_run(repo)
       end
     end
  
