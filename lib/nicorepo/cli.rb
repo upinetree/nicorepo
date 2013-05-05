@@ -3,17 +3,14 @@ class Nicorepo
 
     def run(argv)
       option = argv.shift || help
-
       acc = account
-      id   = acc[:mail]
-      pass = acc[:pass]
 
       repo = Nicorepo.new
 
       begin
-        repo.login(id, pass)
+        repo.login(acc[:mail], acc[:pass])
       rescue
-        warn "invalid id or pass: id = #{id}, pass = #{pass}"
+        warn "invalid mail or pass: mail = #{acc[:mail]}"
         exit 1
       end
 
@@ -26,9 +23,7 @@ class Nicorepo
       loop do
         print 'nicorepo > '
         argv = gets.chomp.split
-        cmd  = argv.shift  || 'help'
-        num  = (argv.shift || 10).to_i
-        nest = (argv.shift ||  3).to_i
+        cmd, num, nest = parse(argv)
 
         logs = nil
 
@@ -63,6 +58,14 @@ class Nicorepo
 
     private
 
+    def parse(argv)
+      cmd  = argv.shift  || 'help'
+      num  = (argv.shift || 10).to_i
+      nest = (argv.shift ||  3).to_i
+
+      return cmd, num, nest
+    end
+
     def help
       puts 'usage: nicorepo [-i]'
       exit 1
@@ -84,7 +87,7 @@ class Nicorepo
     def disp(logs)
       logs.each.with_index(1) do |log, i|
         puts "[#{i}] #{log.body} on #{log.date.to_s}"
-        puts "    : #{log.kind} (#{log.url})"
+        puts "    '#{log.target}' (#{log.url})"
       end
     end
 

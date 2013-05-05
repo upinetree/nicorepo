@@ -16,7 +16,7 @@ describe Nicorepo::Cli do
           cli.run([ '-i' ])
         rescue SystemExit => se
           se.status.should eq 1 
-          $stderr.string.should match /invalid id/
+          $stderr.string.should match /invalid mail or pass/
         end
       end
     end
