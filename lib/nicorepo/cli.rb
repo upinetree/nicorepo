@@ -23,13 +23,12 @@ class Nicorepo
         disp logs
       else
         case cmd
-        when 'i' then interactive_run
+        when 'interactive', 'i' then interactive_run
         else help
         end
       end
     end
 
-    # run interactively with given Nicorepo
     # returns true when exit
     def interactive_run
       loop do
@@ -83,9 +82,9 @@ class Nicorepo
       logs = nil
 
       case cmd
-      when 'all'    then logs = @repo.all    num
-      when 'videos' then logs = @repo.videos num, nest
-      when 'lives'  then logs = @repo.lives  num, nest
+      when 'all',    'a' then logs = @repo.all    num
+      when 'videos', 'v' then logs = @repo.videos num, nest
+      when 'lives',  'l' then logs = @repo.lives  num, nest
       else return nil
       end
 
@@ -95,8 +94,8 @@ class Nicorepo
     def help
       puts '    usage: nicorepo command [params]'
       puts '    command:'
-      puts '        i - begin interactive mode'
       help_commands
+      puts '        interactive, i - begin interactive mode'
       exit 1
     end
 
@@ -104,16 +103,16 @@ class Nicorepo
       puts '    usage: command [params]'
       puts '    command:'
       help_commands
+      puts '        exit'
     end
 
     def help_commands
       puts <<-"EOS"
-        all    [disp_num]
-        videos [disp_num] [nest]
-        lives  [disp_num] [nest]
+        all, a    [disp_num]
+        videos, v [disp_num] [nest]
+        lives, l  [disp_num] [nest]
           *disp_num - number of logs to display at once (default = 10)
           *nest     - max nesting level of pages to search (default = 3)
-        exit
       EOS
     end
 
