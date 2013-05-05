@@ -12,14 +12,7 @@ class Nicorepo
       cmd, num, nest = parse(argv)
       help if cmd == 'help'
 
-      acc  = account
-
-      begin
-        @repo.login(acc[:mail], acc[:pass])
-      rescue
-        warn "invalid mail or pass: mail = #{acc[:mail]}"
-        exit 1
-      end
+      login
 
       logs = exec_command(cmd, num, nest)
       if logs
@@ -46,6 +39,7 @@ class Nicorepo
         else
           case cmd
           when 'open', 'o' then open_url(@logs, num)
+          when 'login'     then login
           when 'exit'      then return true
           else help_interactive; next
           end
@@ -97,6 +91,17 @@ class Nicorepo
       return cmd, num, nest
     end
 
+    def login
+      acc  = account
+
+      begin
+        @repo.login(acc[:mail], acc[:pass])
+      rescue
+        warn "invalid mail or pass: mail = #{acc[:mail]}"
+        exit 1
+      end
+    end
+
     # it returns
     #   - logs  if succeed to exec exepcted command
     #   - nil   if unexpected command given
@@ -126,6 +131,7 @@ class Nicorepo
       puts '    command:'
       help_commands
       puts '        open, o [log_num] - open url of given log number'
+      puts '        login'
       puts '        exit'
     end
 
