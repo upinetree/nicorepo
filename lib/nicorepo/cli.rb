@@ -1,3 +1,5 @@
+require 'launchy'
+
 class Nicorepo
   class Cli
 
@@ -62,6 +64,17 @@ class Nicorepo
       end
      
       return {mail: mail, pass: pass}
+    end
+
+    # options is now just for testing
+    def open_url(logs, num, options = {})
+      url = logs[num - 1].url
+      Launchy.open(url, options) do |exception|
+        puts "Attempted to open #{url} and failed because #{exception}"
+        return false
+      end
+
+      return true
     end
 
 

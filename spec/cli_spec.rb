@@ -66,6 +66,25 @@ describe Nicorepo::Cli do
     end
   end
 
+  describe "#open_url" do
+    context "with 1" do
+      before do
+        @cli = Nicorepo::Cli.new
+        @logs = [ Nicorepo::Log.new ]
+      end
+
+      it "should succeed to open url in browser with first log's url" do
+        @logs.first.url = 'http://www.nicovideo.jp'
+        @cli.open_url(@logs, 1, {dry_run: true}).should be_true
+      end
+
+      it "should fail to open when url is wrongs" do
+        @logs.first.url = 'hoge://piyo'
+        @cli.open_url(@logs, 1, {dry_run: true}).should be_false
+      end
+    end
+  end
+
   after(:all) do
     $stderr = @old_stderr
   end
