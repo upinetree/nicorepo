@@ -5,6 +5,7 @@ class Nicorepo
 
     def initialize
       @repo = Nicorepo.new
+      @logs = nil
     end
 
     def run(argv)
@@ -40,9 +41,11 @@ class Nicorepo
 
         logs = exec_command(cmd, num, nest)
         if logs
-          disp logs
+          @logs = logs
+          disp @logs
         else
           case cmd
+          when 'open' then open_url(@logs, num)
           when 'exit' then return true
           else help_interactive; next
           end
@@ -68,7 +71,13 @@ class Nicorepo
 
     # options is now just for testing
     def open_url(logs, num, options = {})
-      url = logs[num - 1].url
+      log = logs[num - 1]
+      if log.nil?
+        puts "log existence error: please fetch logs"
+        return false
+      end
+
+      url = log.url
       Launchy.open(url, options) do |exception|
         puts "Attempted to open #{url} and failed because #{exception}"
         return false
