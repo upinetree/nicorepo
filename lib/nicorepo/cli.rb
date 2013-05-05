@@ -1,4 +1,5 @@
 require 'launchy'
+require 'readline'
 
 class Nicorepo
   class Cli
@@ -28,8 +29,7 @@ class Nicorepo
     # returns true when exit
     def interactive_run
       loop do
-        print 'nicorepo > '
-        argv = gets.chomp.split
+        argv = Readline::readline("nicorepo > ", true).split
         cmd, num, nest = parse(argv)
 
         logs = exec_command(cmd, num, nest)

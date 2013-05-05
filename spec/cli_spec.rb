@@ -43,9 +43,8 @@ describe Nicorepo::Cli do
   describe "#interactive_run" do
     context "when entered 'exit'" do
       it "should return true" do
-        repo = Nicorepo.new
-        cli  = Nicorepo::Cli.new
-        cli.stub!(:gets) { 'exit' }
+        cli = Nicorepo::Cli.new
+        Readline.stub!(:readline) { 'exit' }
         cli.interactive_run.should be_true
       end
     end
