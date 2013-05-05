@@ -7,6 +7,8 @@ class Nicorepo
 
     def run(argv)
       cmd, num, nest = parse(argv)
+      help if cmd == 'help'
+
       acc  = account
 
       begin
