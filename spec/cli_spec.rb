@@ -13,7 +13,7 @@ describe Nicorepo::Cli do
         cli = Nicorepo::Cli.new
         begin
           cli.stub!(:account).and_return({mail: 'hoge', pass: 'piyo'})
-          cli.run([ '-i' ])
+          cli.run([ 'i' ])
         rescue SystemExit => se
           se.status.should eq 1 
           $stderr.string.should match /invalid mail or pass/
@@ -33,7 +33,7 @@ describe Nicorepo::Cli do
     context "with command 'lives'" do
       it "should recieve logs of live" do
         argv = [ 'lives', '5', '3' ]
-        Nicorepo.any_instance.should_receive(:lives).with(5, 3)
+        Nicorepo.any_instance.should_receive(:lives).with(5, 3).and_return([Nicorepo::Log.new])
         cli = Nicorepo::Cli.new
         cli.run(argv)
       end
@@ -46,7 +46,7 @@ describe Nicorepo::Cli do
         repo = Nicorepo.new
         cli  = Nicorepo::Cli.new
         cli.stub!(:gets) { 'exit' }
-        cli.interactive_run(repo).should be_true
+        cli.interactive_run.should be_true
       end
     end
   end

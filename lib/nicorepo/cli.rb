@@ -1,50 +1,65 @@
-#TODO: fix help
-
 class Nicorepo
   class Cli
 
-    def run(argv)
-      cmd = argv.shift || help
-      acc = account
+    def initialize
+      @repo = Nicorepo.new
+    end
 
-      repo = Nicorepo.new
+    def run(argv)
+      cmd, num, nest = parse(argv)
+      acc  = account
 
       begin
-        repo.login(acc[:mail], acc[:pass])
+        @repo.login(acc[:mail], acc[:pass])
       rescue
         warn "invalid mail or pass: mail = #{acc[:mail]}"
         exit 1
       end
 
-      case cmd
-      when 'lives'
-        num  = (argv.shift || 10).to_i
-        nest = (argv.shift ||  3).to_i
-        logs = repo.lives  num, nest
-        disp logs if logs
-      when 'i'     then interactive_run(repo)
+      logs = exec_command(cmd, num, nest)
+      if logs
+        disp logs
+      else
+        case cmd
+        when 'i' then interactive_run
+        else help
+        end
       end
     end
- 
+
+    # it returns
+    #   - logs  if succeed to exec exepcted command
+    #   - nil   if unexpected command given
+    def exec_command(cmd, num, nest)
+      logs = nil
+
+      case cmd
+      when 'all'    then logs = @repo.all    num
+      when 'videos' then logs = @repo.videos num, nest
+      when 'lives'  then logs = @repo.lives  num, nest
+      else return nil
+      end
+
+      return logs
+    end
+
     # run interactively with given Nicorepo
     # returns true when exit
-    def interactive_run(repo)
+    def interactive_run
       loop do
         print 'nicorepo > '
         argv = gets.chomp.split
         cmd, num, nest = parse(argv)
 
-        logs = nil
-
-        case cmd
-        when 'all'    then logs = repo.all    num
-        when 'videos' then logs = repo.videos num, nest
-        when 'lives'  then logs = repo.lives  num, nest
-        when 'exit'   then return true
-        else help_interactive; next
+        logs = exec_command(cmd, num, nest)
+        if logs
+          disp logs
+        else
+          case cmd
+          when 'exit' then return true
+          else help_interactive; next
+          end
         end
-
-        disp logs if logs
       end
     end
 
@@ -93,7 +108,7 @@ class Nicorepo
       puts <<-"EOS"
         all    [disp_num]
         videos [disp_num] [nest]
-        lives  [disp_num] [nest]'
+        lives  [disp_num] [nest]
           *disp_num - number of logs to display at once (default = 10)
           *nest     - max nesting level of pages to search (default = 3)
         exit
