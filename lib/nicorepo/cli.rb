@@ -76,20 +76,27 @@ class Nicorepo
     end
 
     def help
-      puts 'usage: nicorepo [-i]'
+      puts '    usage: nicorepo command [params]'
+      puts '    command:'
+      puts '        i - begin interactive mode'
+      help_commands
       exit 1
     end
 
     def help_interactive
+      puts '    usage: command [params]'
+      puts '    command:'
+      help_commands
+    end
+
+    def help_commands
       puts <<-"EOS"
-        usage: command params'
-        command:
-          all    [disp_num]
-          videos [disp_num] [nest]
-          lives  [disp_num] [nest]'
-            *disp_num - number of logs to display at once (default = 10)
-            *nest     - max nesting level of pages to search (default = 3)
-          exit
+        all    [disp_num]
+        videos [disp_num] [nest]
+        lives  [disp_num] [nest]'
+          *disp_num - number of logs to display at once (default = 10)
+          *nest     - max nesting level of pages to search (default = 3)
+        exit
       EOS
     end
 
