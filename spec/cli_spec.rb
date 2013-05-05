@@ -21,11 +21,20 @@ describe Nicorepo::Cli do
       end
     end
 
-    context "when call with -i option" do
+    context "with option '-i'" do
       it "should exec interactive mode" do
         argv = [ '-i' ]
         cli = Nicorepo::Cli.new
         cli.should_receive(:interactive_run)
+        cli.run(argv)
+      end
+    end
+
+    context "with command 'lives'" do
+      it "should recieve logs of live" do
+        argv = [ 'lives', '5', '3' ]
+        Nicorepo.any_instance.should_receive(:lives).with(5, 3)
+        cli = Nicorepo::Cli.new
         cli.run(argv)
       end
     end

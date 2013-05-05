@@ -1,8 +1,10 @@
+#TODO: fix help
+
 class Nicorepo
   class Cli
 
     def run(argv)
-      option = argv.shift || help
+      cmd = argv.shift || help
       acc = account
 
       repo = Nicorepo.new
@@ -14,7 +16,14 @@ class Nicorepo
         exit 1
       end
 
-      interactive_run(repo) if option == '-i' 
+      case cmd
+      when 'lives'
+        num  = (argv.shift || 10).to_i
+        nest = (argv.shift ||  3).to_i
+        logs = repo.lives  num, nest
+        disp logs if logs
+      when '-i'     then interactive_run(repo)
+      end
     end
  
     # run interactively with given Nicorepo
@@ -35,7 +44,7 @@ class Nicorepo
         else help_interactive; next
         end
 
-        disp logs if repo
+        disp logs if logs
       end
     end
 
@@ -93,5 +102,4 @@ class Nicorepo
 
   end
 end
-
 
