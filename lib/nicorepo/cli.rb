@@ -27,22 +27,6 @@ class Nicorepo
       end
     end
 
-    # it returns
-    #   - logs  if succeed to exec exepcted command
-    #   - nil   if unexpected command given
-    def exec_command(cmd, num, nest)
-      logs = nil
-
-      case cmd
-      when 'all'    then logs = @repo.all    num
-      when 'videos' then logs = @repo.videos num, nest
-      when 'lives'  then logs = @repo.lives  num, nest
-      else return nil
-      end
-
-      return logs
-    end
-
     # run interactively with given Nicorepo
     # returns true when exit
     def interactive_run
@@ -88,6 +72,22 @@ class Nicorepo
       nest = (argv.shift ||  3).to_i
 
       return cmd, num, nest
+    end
+
+    # it returns
+    #   - logs  if succeed to exec exepcted command
+    #   - nil   if unexpected command given
+    def exec_command(cmd, num, nest)
+      logs = nil
+
+      case cmd
+      when 'all'    then logs = @repo.all    num
+      when 'videos' then logs = @repo.videos num, nest
+      when 'lives'  then logs = @repo.lives  num, nest
+      else return nil
+      end
+
+      return logs
     end
 
     def help
