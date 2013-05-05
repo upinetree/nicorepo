@@ -1,4 +1,5 @@
 spec/resource/account.txt
 config.txt
+Gemfile.lock
 u8
 *.swp
