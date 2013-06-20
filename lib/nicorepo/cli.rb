@@ -65,13 +65,12 @@ class Nicorepo
 
     # options is now just for testing
     def open_url(logs, num, options = {})
-      log = logs[num - 1]
-      if log.nil?
+      url = logs[num - 1].url
+      if url.nil?
         puts "log existence error: please fetch logs"
         return false
       end
 
-      url = log.url
       Launchy.open(url, options) do |exception|
         puts "Attempted to open #{url} and failed because #{exception}"
         return false
