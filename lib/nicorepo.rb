@@ -77,7 +77,7 @@ class Nicorepo
 
   def all(req_num = LOGS_PER_PAGE)
     page_nest_max = req_num / LOGS_PER_PAGE + 1
-    get_logs(req_num, page_nest_max)
+    fetch_logs(req_num, page_nest_max)
   end
 
   def videos(req_num = 3, page_nest_max = 5)
@@ -89,12 +89,12 @@ class Nicorepo
   end
 
   def filtered_by(filter, req_num = LOGS_PER_PAGE, page_nest_max = 1)
-    get_logs(req_num, page_nest_max, filter)
+    fetch_logs(req_num, page_nest_max, filter)
   end
 
   private
 
-  def get_logs(req_num, page_nest_max, filter = nil, url = URL::REPO_ALL)
+  def fetch_logs(req_num, page_nest_max, filter = nil, url = URL::REPO_ALL)
     return [] unless page_nest_max > 0
 
     # fetch current logs
@@ -114,7 +114,7 @@ class Nicorepo
     if logs.size < req_num then
       next_url = page.search('div.next-page/a').first['href']
       begin
-        next_logs = get_logs(req_num - logs.size, page_nest_max - 1, filter, next_url)
+        next_logs = fetch_logs(req_num - logs.size, page_nest_max - 1, filter, next_url)
       rescue
         warn '*** logs access error occurs ***'
         return logs
