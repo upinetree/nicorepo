@@ -10,14 +10,51 @@ class Nicorepo
   class Log
     attr_accessor :body, :target, :url, :author, :kind, :date
 
-    def initialize
-      @body   = nil
-      @target = nil
-      @url    = nil
-      @author = nil
-      @kind   = nil
-      @date   = nil
+    def initialize(node = nil)
+      if node.nil? then return end
+      @body   = parse_body   node
+      @target = parse_target node
+      @url    = parse_url    node
+      @author = parse_author node
+      @kind   = parse_kind   node
+      @date   = parse_date   node
     end
+
+    private
+
+    def parse_body(node)
+      node.search('div.log-body').first.inner_text.gsub(/(\t|\r|\n)/, "")
+    end
+
+    def parse_target(node)
+      node.search('div.log-target-info/a').first.inner_text
+    end
+
+    def parse_url(node)
+      node.search('div.log-target-info/a').first['href']
+    end
+
+    def parse_author(node)
+      node.search('div.log-body/a').first.inner_text
+    end
+
+    # example: 'log.log-community-video-upload' -> 'community-video-upload'
+    def parse_kind(node)
+      cls = node['class']
+      trim = 'log-'
+
+      index = cls.index(/#{trim}/)
+      return cls if index.nil?
+
+      index += trim.size
+      cls[index..cls.size]
+    end
+
+    def parse_date(node)
+      d = node.search('div.log-footer/a.log-footer-date/time').first['datetime']
+      Time.xmlschema(d).localtime
+    end
+ 
   end
 
   class LoginError < StandardError; end
@@ -63,16 +100,7 @@ class Nicorepo
     # fetch current logs
     page = @agent.get(url)
     begin
-      logs = log_nodes(page).map do |node|
-        log = Log.new
-        log.body   = parse_body   node
-        log.target = parse_target node
-        log.url    = parse_url    node
-        log.author = parse_author node
-        log.kind   = parse_kind   node
-        log.date   = parse_date   node
-        log
-      end
+      logs = log_nodes(page).map { |node| Log.new(node) }
     rescue
       raise LogsAccessError
     end
@@ -100,39 +128,6 @@ class Nicorepo
 
   def log_nodes(page)
     page.search('div.timeline/div.log')
-  end
-
-  def parse_body(node)
-    node.search('div.log-body').first.inner_text.gsub(/(\t|\r|\n)/, "")
-  end
-
-  def parse_target(node)
-    node.search('div.log-target-info/a').first.inner_text
-  end
-
-  def parse_url(node)
-    node.search('div.log-target-info/a').first['href']
-  end
-
-  def parse_author(node)
-    node.search('div.log-body/a').first.inner_text
-  end
-
-  # example: 'log.log-community-video-upload' -> 'community-video-upload'
-  def parse_kind(node)
-    cls = node['class']
-    trim = 'log-'
-
-    index = cls.index(/#{trim}/)
-    return cls if index.nil?
-
-    index += trim.size
-    cls[index..cls.size]
-  end
-
-  def parse_date(node)
-    d = node.search('div.log-footer/a.log-footer-date/time').first['datetime']
-    Time.xmlschema(d).localtime
   end
 
 end
