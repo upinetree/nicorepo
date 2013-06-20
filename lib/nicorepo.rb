@@ -21,6 +21,7 @@ class Nicorepo
   end
 
   class LoginError < StandardError; end
+  class LogsAccessError < StandardError; end
 
   LOGS_PER_PAGE = 20
 
@@ -59,16 +60,21 @@ class Nicorepo
   def get_logs(req_num, page_nest_max, filter = nil, url = URL::REPO_ALL)
     return [] unless page_nest_max > 0
 
+    # fetch current logs
     page = @agent.get(url)
-    logs = log_nodes(page).map do |node|
-      log = Log.new
-      log.body   = parse_body   node
-      log.target = parse_target node
-      log.url    = parse_url    node
-      log.author = parse_author node
-      log.kind   = parse_kind   node
-      log.date   = parse_date   node
-      log
+    begin
+      logs = log_nodes(page).map do |node|
+        log = Log.new
+        log.body   = parse_body   node
+        log.target = parse_target node
+        log.url    = parse_url    node
+        log.author = parse_author node
+        log.kind   = parse_kind   node
+        log.date   = parse_date   node
+        log
+      end
+    rescue
+      raise LogsAccessError
     end
     logs.select!{ |log| log.kind =~ /#{filter}/ } if filter
 
@@ -76,9 +82,17 @@ class Nicorepo
       return logs[0, req_num]
     end
 
+    # fetch next logs
     if logs.size < req_num then
       next_url = page.search('div.next-page/a').first['href']
-      logs += get_logs(req_num - logs.size, page_nest_max - 1, filter, next_url)
+      begin
+        next_logs = get_logs(req_num - logs.size, page_nest_max - 1, filter, next_url)
+      rescue
+        warn '*** logs access error occurs ***'
+        return logs
+      else
+        logs += next_logs unless next_logs.nil?
+      end
     end
 
     return logs
