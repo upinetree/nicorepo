@@ -77,7 +77,12 @@ describe Nicorepo::Cli do
         expect{ @cli.open_url(@logs, 1, {dry_run: true}) }.to be_true
       end
 
-      it "should fail to open when url is wrongs" do
+      it "should raise error when url is nil" do
+        @logs.first.url = nil
+        expect{ @cli.open_url(@logs, 1, {dry_run: true}) }.to raise_error
+      end
+
+      it "should raise error when url is wrongs" do
         @logs.first.url = 'hoge://piyo'
         expect{ @cli.open_url(@logs, 1, {dry_run: true}) }.to raise_error
       end

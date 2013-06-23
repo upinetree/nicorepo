@@ -2,7 +2,10 @@ require 'launchy'
 require 'readline'
 
 class Nicorepo
+
   class Cli
+
+    class LogExistenceError < StandardError; end
 
     def initialize
       @repo = Nicorepo.new
@@ -68,7 +71,7 @@ class Nicorepo
       url = logs[num - 1].url
       if url.nil?
         puts "log existence error: please fetch logs"
-        return false
+        raise LogExistenceError
       end
 
       Launchy.open(url, options) do |exception|
