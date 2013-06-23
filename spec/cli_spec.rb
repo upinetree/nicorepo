@@ -74,12 +74,12 @@ describe Nicorepo::Cli do
 
       it "should succeed to open url in browser with first log's url" do
         @logs.first.url = 'http://www.nicovideo.jp'
-        @cli.open_url(@logs, 1, {dry_run: true}).should be_true
+        expect{ @cli.open_url(@logs, 1, {dry_run: true}) }.to be_true
       end
 
       it "should fail to open when url is wrongs" do
         @logs.first.url = 'hoge://piyo'
-        @cli.open_url(@logs, 1, {dry_run: true}).should be_false
+        expect{ @cli.open_url(@logs, 1, {dry_run: true}) }.to raise_error
       end
     end
   end

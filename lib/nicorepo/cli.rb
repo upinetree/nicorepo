@@ -73,7 +73,7 @@ class Nicorepo
 
       Launchy.open(url, options) do |exception|
         puts "Attempted to open #{url} and failed because #{exception}"
-        return false
+        raise exception
       end
 
       return true
