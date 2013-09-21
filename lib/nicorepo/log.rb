@@ -1,12 +1,12 @@
 class Nicorepo
 
   class Log
-    attr_accessor :body, :target, :url, :author, :kind, :date
+    attr_accessor :body, :title, :url, :author, :kind, :date
 
     def initialize(node = nil)
       if node.nil? then return end
       @body   = parse_body   node
-      @target = parse_target node
+      @title  = parse_title  node
       @url    = parse_url    node
       @author = parse_author node
       @kind   = parse_kind   node
@@ -19,7 +19,7 @@ class Nicorepo
       node.search('div.log-body').first.inner_text.gsub(/(\t|\r|\n)/, "")
     end
 
-    def parse_target(node)
+    def parse_title(node)
       node.search('div.log-target-info/a').first.inner_text
     end
 

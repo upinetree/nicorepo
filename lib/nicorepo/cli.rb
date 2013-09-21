@@ -150,7 +150,7 @@ class Nicorepo
     def disp(logs)
       logs.each.with_index(1) do |log, i|
         puts "[#{i}] #{log.body} on #{log.date.to_s}"
-        puts "    '#{log.target}' (#{log.url})"
+        puts "    '#{log.title}' (#{log.url})"
       end
     end
 
