@@ -1,5 +1,6 @@
 require 'launchy'
 require 'readline'
+require 'yaml'
 
 class Nicorepo
 
