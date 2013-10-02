@@ -55,7 +55,7 @@ class Nicorepo
       begin
         confs = open(File.join(root, 'config.yaml')) { |f| YAML.load(f.read) }
       rescue
-        warn "config read error: please enter mail and pass to config.txt"
+        warn "config read error: please enter mail and pass to config.yaml"
         exit 1
       end
      

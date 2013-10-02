@@ -23,17 +23,17 @@ bin/nicorepoを呼び出します。本体はlib/nicorepo/cli.rbです。
 
 なお、起動前にアカウントを設定する必要があります。
 
-config.txtをnicorepoフォルダに作成して、下記のように記述してください。
+config.yamlをnicorepoフォルダに作成して、下記のように記述してください。
 
-    1行目: your@mail
-    2行目: password
+    mail: your@mail
+    pass: your_password
 
 ### command
 
-	all, a    [disp_num]         : すべてのニコレポを表示
-	videos, v [disp_num] [nest]  : 投稿動画のみ
-	lives, l  [disp_num] [nest]  : 生放送のみ
-	interactive, i               : 対話モード（後述）
+    all, a    [disp_num]         : すべてのニコレポを表示
+    videos, v [disp_num] [nest]  : 投稿動画のみ
+    lives, l  [disp_num] [nest]  : 生放送のみ
+    interactive, i               : 対話モード（後述）
 
 - [disp\_num]の数だけニコレポを表示します。省略すると10個表示します
 
@@ -66,7 +66,7 @@ config.txtをnicorepoフォルダに作成して、下記のように記述し�
 
     all(req_num = LOGS_PER_PAGE)
     videos(req_num = 3, page_nest_max = 5)
-	lives(req_num = 3, page_nest_max = 5)
+    lives(req_num = 3, page_nest_max = 5)
 
 取得したニコレポは`Nicorepo::Log`のArrayで返ってきます。
 中身は、
@@ -84,8 +84,8 @@ filtered_byを使うと、@kindを指定の条件でフィルタしてログを�
 
 例えば：
 
-	logs = filtered_by('clip')
-	logs = filtered_by('seiga')
-	logs = filtered_by('mylist')
+    logs = filtered_by('clip')
+    logs = filtered_by('seiga')
+    logs = filtered_by('mylist')
 
 のような感じです。
