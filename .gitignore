@@ -1,5 +1,5 @@
 spec/resource/account.txt
-config.txt
+config.yaml
 Gemfile.lock
 u8
 *.swp

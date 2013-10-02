@@ -53,17 +53,13 @@ class Nicorepo
    def account
       root = File.expand_path('../../../', __FILE__)
       begin
-        f = open(File.join(root, 'config.txt'))
-        mail = f.gets.chomp!
-        pass = f.gets.chomp!
+        confs = open(File.join(root, 'config.yaml')) { |f| YAML.load(f.read) }
       rescue
         warn "config read error: please enter mail and pass to config.txt"
         exit 1
-      else
-        f.close
       end
      
-      return {mail: mail, pass: pass}
+      return {mail: confs["mail"], pass: confs["pass"]}
     end
 
     # options is now just for testing

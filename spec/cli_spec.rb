@@ -51,16 +51,25 @@ describe Nicorepo::Cli do
   end
 
   describe "#account" do
-    context "when config.txt not found" do
+    before do
+      @cli = Nicorepo::Cli.new
+    end
+
+    context "when config.yaml not found" do
       it "should exit with error massage" do
-        cli  = Nicorepo::Cli.new
         begin
-          cli.stub!(:open).and_return(nil)
-          cli.account
+          @cli.stub!(:open).and_raise(StandardError)
+          @cli.account
         rescue SystemExit => se
           se.status.should eq 1 
           $stderr.string.should match /config read error/
         end
+      end
+    end
+
+    context "when config.yaml has 'mail' and 'pass'" do
+      it "should return the hash 'mail' and 'pass'" do
+        @cli.account.should include(:mail, :pass)
       end
     end
   end
