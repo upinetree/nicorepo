@@ -31,17 +31,15 @@ describe Nicorepo::Cli do
 
       context "with command 'i'" do
         it "should exec interactive mode" do
-          argv = [ 'i' ]
           cli.should_receive(:interactive_run)
-          cli.run(argv)
+          cli.run([ 'i' ])
         end
       end
 
       context "with command 'lives'" do
         it "should recieve logs of live" do
-          argv = [ 'lives', '5', '3' ]
           Nicorepo.any_instance.should_receive(:lives).with(5, 3).and_return([Nicorepo::Log.new])
-          cli.run(argv)
+          cli.run([ 'lives', '5', '3' ])
         end
       end
     end
