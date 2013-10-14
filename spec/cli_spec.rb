@@ -25,6 +25,7 @@ describe Nicorepo::Cli do
       it "should exec interactive mode" do
         argv = [ 'i' ]
         cli = Nicorepo::Cli.new
+        cli.stub(:login)
         cli.should_receive(:interactive_run)
         cli.run(argv)
       end
@@ -35,6 +36,7 @@ describe Nicorepo::Cli do
         argv = [ 'lives', '5', '3' ]
         Nicorepo.any_instance.should_receive(:lives).with(5, 3).and_return([Nicorepo::Log.new])
         cli = Nicorepo::Cli.new
+        cli.stub(:login)
         cli.run(argv)
       end
     end
