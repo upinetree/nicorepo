@@ -73,7 +73,8 @@ describe Nicorepo::Cli do
 
     context "when config.yaml has 'mail' and 'pass'" do
       it "should return the hash 'mail' and 'pass'" do
-        cli.account.should include(:mail, :pass)
+        cli.stub!(:open).and_return({"mail" => "hoge", "pass" => "fuga"})
+        cli.account.should include(:mail => "hoge", :pass => "fuga")
       end
     end
   end
