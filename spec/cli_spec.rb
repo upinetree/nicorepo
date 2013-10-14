@@ -77,6 +77,20 @@ describe Nicorepo::Cli do
         cli.account.should include(:mail => "hoge", :pass => "fuga")
       end
     end
+
+    context "when config.yaml does not have 'mail'" do
+      it "should raise error" do
+        cli.stub!(:open).and_return({"pass" => "hoge"})
+        expect{cli.account}.to raise_error(Nicorepo::Cli::AccountError)
+      end
+    end
+
+    context "when config.yaml does not have 'pass'" do
+      it "should raise error" do
+        cli.stub!(:open).and_return({"mail" => "hoge"})
+        expect{cli.account}.to raise_error(Nicorepo::Cli::AccountError)
+      end
+    end
   end
 
   describe "#open_url" do

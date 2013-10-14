@@ -7,6 +7,7 @@ class Nicorepo
   class Cli
 
     class LogExistenceError < StandardError; end
+    class AccountError < StandardError; end
 
     def initialize
       @repo = Nicorepo.new
@@ -51,7 +52,7 @@ class Nicorepo
       end
     end
 
-   def account
+    def account
       root = File.expand_path('../../../', __FILE__)
       begin
         confs = open(File.join(root, 'config.yaml')) { |f| YAML.load(f.read) }
@@ -60,6 +61,7 @@ class Nicorepo
         exit 1
       end
      
+      raise AccountError if confs["mail"].nil? || confs["pass"].nil?
       return {mail: confs["mail"], pass: confs["pass"]}
     end
 
