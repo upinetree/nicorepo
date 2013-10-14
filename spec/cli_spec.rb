@@ -15,6 +15,7 @@ describe Nicorepo::Cli do
       it "should exit with error massage" do
         begin
           Nicorepo.any_instance.stub(:login).and_raise(StandardError)
+          cli.stub(:account).and_return({mail: "hoge@fuga.piyo", pass: "foobar"})
           cli.run([ 'i' ])
         rescue SystemExit => se
           se.status.should eq 1 
