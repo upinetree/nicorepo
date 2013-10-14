@@ -61,13 +61,8 @@ describe Nicorepo::Cli do
 
     context "when config.yaml not found" do
       it "should exit with error massage" do
-        begin
-          cli.stub!(:open).and_raise(StandardError)
-          cli.account
-        rescue SystemExit => se
-          se.status.should eq 1 
-          $stderr.string.should match /config read error/
-        end
+        cli.stub!(:open).and_raise(StandardError)
+        expect{cli.account}.to raise_error(Nicorepo::Cli::AccountError)
       end
     end
 

@@ -57,8 +57,7 @@ class Nicorepo
       begin
         confs = open(File.join(root, 'config.yaml')) { |f| YAML.load(f.read) }
       rescue
-        warn "config read error: please enter mail and pass to config.yaml"
-        exit 1
+        raise AccountError
       end
      
       raise AccountError if confs["mail"].nil? || confs["pass"].nil?
@@ -93,7 +92,12 @@ class Nicorepo
     end
 
     def login
-      acc  = account
+      begin
+        acc  = account
+      rescue AccountError
+        warn "config read error: please enter mail and pass to config.yaml"
+        exit 1
+      end
 
       begin
         @repo.login(acc[:mail], acc[:pass])
