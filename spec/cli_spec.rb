@@ -8,9 +8,11 @@ describe Nicorepo::Cli do
   end
 
   describe "#run" do
+
+    let(:cli) { Nicorepo::Cli.new }
+
     context "when login failed" do
       it "should exit with error massage" do
-        cli = Nicorepo::Cli.new
         begin
           cli.stub!(:account).and_return({mail: 'hoge', pass: 'piyo'})
           cli.run([ 'i' ])
@@ -21,23 +23,26 @@ describe Nicorepo::Cli do
       end
     end
 
-    context "with command 'i'" do
-      it "should exec interactive mode" do
-        argv = [ 'i' ]
-        cli = Nicorepo::Cli.new
-        cli.stub(:login)
-        cli.should_receive(:interactive_run)
-        cli.run(argv)
-      end
-    end
+    context "when login succeed" do
 
-    context "with command 'lives'" do
-      it "should recieve logs of live" do
-        argv = [ 'lives', '5', '3' ]
-        Nicorepo.any_instance.should_receive(:lives).with(5, 3).and_return([Nicorepo::Log.new])
-        cli = Nicorepo::Cli.new
+      before(:each) do
         cli.stub(:login)
-        cli.run(argv)
+      end
+
+      context "with command 'i'" do
+        it "should exec interactive mode" do
+          argv = [ 'i' ]
+          cli.should_receive(:interactive_run)
+          cli.run(argv)
+        end
+      end
+
+      context "with command 'lives'" do
+        it "should recieve logs of live" do
+          argv = [ 'lives', '5', '3' ]
+          Nicorepo.any_instance.should_receive(:lives).with(5, 3).and_return([Nicorepo::Log.new])
+          cli.run(argv)
+        end
       end
     end
   end
