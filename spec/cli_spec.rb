@@ -66,13 +66,6 @@ describe Nicorepo::Cli do
       end
     end
 
-    context "when config.yaml has 'mail' and 'pass'" do
-      it "should return the hash 'mail' and 'pass'" do
-        cli.stub!(:open).and_return({"mail" => "hoge", "pass" => "fuga"})
-        cli.account.should include(:mail => "hoge", :pass => "fuga")
-      end
-    end
-
     context "when config.yaml does not have 'mail'" do
       it "should raise error" do
         cli.stub!(:open).and_return({"pass" => "hoge"})
@@ -84,6 +77,13 @@ describe Nicorepo::Cli do
       it "should raise error" do
         cli.stub!(:open).and_return({"mail" => "hoge"})
         expect{cli.account}.to raise_error(Nicorepo::Cli::AccountError)
+      end
+    end
+
+    context "when config.yaml has 'mail' and 'pass'" do
+      it "should return the hash 'mail' and 'pass'" do
+        cli.stub!(:open).and_return({"mail" => "hoge", "pass" => "fuga"})
+        cli.account.should include(:mail => "hoge", :pass => "fuga")
       end
     end
   end
