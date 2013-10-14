@@ -14,7 +14,7 @@ describe Nicorepo::Cli do
     context "when login failed" do
       it "should exit with error massage" do
         begin
-          cli.stub!(:account).and_return({mail: 'hoge', pass: 'piyo'})
+          Nicorepo.any_instance.stub(:login).and_raise(StandardError)
           cli.run([ 'i' ])
         rescue SystemExit => se
           se.status.should eq 1 
@@ -38,8 +38,8 @@ describe Nicorepo::Cli do
 
       context "with command 'lives'" do
         it "should recieve logs of live" do
-          Nicorepo.any_instance.should_receive(:lives).with(5, 3).and_return([Nicorepo::Log.new])
-          cli.run([ 'lives', '5', '3' ])
+          Nicorepo.any_instance.should_receive(:lives).and_return([Nicorepo::Log.new])
+          cli.run([ 'lives' ])
         end
       end
     end
