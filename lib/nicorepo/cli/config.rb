@@ -10,7 +10,7 @@ class Nicorepo
       class AccountError < StandardError; end
 
       def initialize
-        @params = []
+        @params = {}
       end
 
       def read
