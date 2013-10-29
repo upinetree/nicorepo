@@ -1,6 +1,5 @@
 require 'launchy'
 require 'readline'
-require 'yaml'
 
 class Nicorepo
 
@@ -12,6 +11,7 @@ class Nicorepo
     def initialize
       @repo = Nicorepo.new
       @logs = nil
+      @conf = Nicorepo::Cli::Config.new
     end
 
     def run(argv)
@@ -52,18 +52,6 @@ class Nicorepo
       end
     end
 
-    def account
-      root = File.expand_path('../../../', __FILE__)
-      begin
-        confs = open(File.join(root, 'config.yaml')) { |f| YAML.load(f.read) }
-      rescue
-        raise AccountError
-      end
-     
-      raise AccountError if confs["mail"].nil? || confs["pass"].nil?
-      return {mail: confs["mail"], pass: confs["pass"]}
-    end
-
     # options is now just for testing
     def open_url(logs, num, options = {})
       url = logs[num - 1].url
@@ -93,7 +81,7 @@ class Nicorepo
 
     def login
       begin
-        acc  = account
+        acc  = @conf.account
       rescue AccountError
         warn "config read error: please enter mail and pass to config.yaml"
         exit 1

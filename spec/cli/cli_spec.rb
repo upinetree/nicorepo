@@ -1,5 +1,4 @@
 require 'nicorepo'
-require 'spec_helper'
 
 describe Nicorepo::Cli do
   before(:all) do
@@ -14,8 +13,7 @@ describe Nicorepo::Cli do
     context "when login failed" do
       it "should exit with error massage" do
         begin
-          Nicorepo.any_instance.stub(:login).and_raise(StandardError)
-          cli.stub(:account).and_return({mail: "hoge@fuga.piyo", pass: "foobar"})
+          Nicorepo::Cli::Config.any_instance.stub(:account).and_return({mail: "invalid@mail.com", pass: "invalid_pass"})
           cli.run([ 'i' ])
         rescue SystemExit => se
           se.status.should eq 1 
@@ -52,39 +50,6 @@ describe Nicorepo::Cli do
         cli = Nicorepo::Cli.new
         Readline.stub!(:readline) { 'exit' }
         cli.interactive_run.should be_true
-      end
-    end
-  end
-
-  describe "#account" do
-
-    let(:cli) { Nicorepo::Cli.new }
-
-    context "when config.yaml not found" do
-      it "should exit with error massage" do
-        cli.stub!(:open).and_raise(StandardError)
-        expect{cli.account}.to raise_error(Nicorepo::Cli::AccountError)
-      end
-    end
-
-    context "when config.yaml does not have 'mail'" do
-      it "should raise error" do
-        cli.stub!(:open).and_return({"pass" => "hoge"})
-        expect{cli.account}.to raise_error(Nicorepo::Cli::AccountError)
-      end
-    end
-
-    context "when config.yaml does not have 'pass'" do
-      it "should raise error" do
-        cli.stub!(:open).and_return({"mail" => "hoge"})
-        expect{cli.account}.to raise_error(Nicorepo::Cli::AccountError)
-      end
-    end
-
-    context "when config.yaml has 'mail' and 'pass'" do
-      it "should return the hash 'mail' and 'pass'" do
-        cli.stub!(:open).and_return({"mail" => "hoge", "pass" => "fuga"})
-        cli.account.should include(:mail => "hoge", :pass => "fuga")
       end
     end
   end

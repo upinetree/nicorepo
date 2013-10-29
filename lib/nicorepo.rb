@@ -83,4 +83,5 @@ class Nicorepo
 
 end
 
-require_relative 'nicorepo/cli.rb'
+require_relative 'nicorepo/cli/cli.rb'
+require_relative 'nicorepo/cli/config.rb'
