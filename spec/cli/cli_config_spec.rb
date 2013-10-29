@@ -1,4 +1,3 @@
-require 'nicorepo'
 require 'spec_helper'
 
 describe Nicorepo::Cli::Config do

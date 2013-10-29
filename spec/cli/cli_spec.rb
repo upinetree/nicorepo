@@ -1,4 +1,4 @@
-require 'nicorepo'
+require 'spec_helper'
 
 describe Nicorepo::Cli do
   before(:all) do
