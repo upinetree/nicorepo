@@ -6,7 +6,6 @@ class Nicorepo
   class Cli
 
     class LogExistenceError < StandardError; end
-    class AccountError < StandardError; end
 
     def initialize
       @repo = Nicorepo.new
@@ -15,6 +14,7 @@ class Nicorepo
     end
 
     def run(argv)
+      configure
       cmd, num, nest = parse(argv)
       help if cmd == 'help'
 
@@ -71,6 +71,18 @@ class Nicorepo
 
     private
 
+    def configure
+      begin
+        @conf.read
+      rescue Nicorepo::Cli::Config::ReadError
+        warn "config read error: please make config.yaml"
+        exit 1
+      rescue Nicorepo::Cli::Config::AccountError
+        warn "config read error: please enter mail and pass to config.yaml"
+        exit 1
+      end
+    end
+
     def parse(argv)
       cmd  = argv.shift  || 'help'
       num  = (argv.shift || 10).to_i
@@ -80,12 +92,7 @@ class Nicorepo
     end
 
     def login
-      begin
-        acc  = @conf.account
-      rescue AccountError
-        warn "config read error: please enter mail and pass to config.yaml"
-        exit 1
-      end
+      acc  = @conf.account
 
       begin
         @repo.login(acc[:mail], acc[:pass])

@@ -5,17 +5,28 @@ class Nicorepo
   class Cli
   
     class Config
-      def account
+
+      class ReadError < StandardError; end
+      class AccountError < StandardError; end
+
+      def initialize
+        @params = []
+      end
+
+      def read
         root = File.expand_path('../../../../', __FILE__)
 
         begin
-          confs = open(File.join(root, 'config.yaml')) { |f| YAML.load(f.read) }
+          @params = open(File.join(root, 'config.yaml')) { |f| YAML.load(f.read) }
         rescue
-          raise AccountError
+          raise ReadError
         end
-       
-        raise AccountError if confs["mail"].nil? || confs["pass"].nil?
-        return {mail: confs["mail"], pass: confs["pass"]}
+
+        raise AccountError if @params["mail"].nil? || @params["pass"].nil?
+      end
+
+      def account
+        return {mail: @params["mail"], pass: @params["pass"]}
       end
     end
   

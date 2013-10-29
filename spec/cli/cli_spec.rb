@@ -9,6 +9,7 @@ describe Nicorepo::Cli do
   describe "#run" do
 
     let(:cli) { Nicorepo::Cli.new }
+    before(:each) { cli.stub(:configure) }
 
     context "when login failed" do
       it "should exit with error massage" do
