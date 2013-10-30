@@ -9,6 +9,11 @@ class Nicorepo
       class ReadError < StandardError; end
       class AccountError < StandardError; end
 
+      module Default
+        NUM  = 10
+        NEST = 3
+      end
+
       def initialize
         @params = {}
       end
@@ -27,6 +32,14 @@ class Nicorepo
 
       def account
         return {mail: @params["mail"], pass: @params["pass"]}
+      end
+
+      def num
+        Default::NUM
+      end
+
+      def nest
+        Default::NEST
       end
     end
   

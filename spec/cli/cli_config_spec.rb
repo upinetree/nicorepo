@@ -42,5 +42,27 @@ describe Nicorepo::Cli::Config do
     end
   end
 
+  describe "#num" do
+    let(:conf) { Nicorepo::Cli::Config.new }
+
+    context "without argument" do
+      it "should return default number for fetching" do
+        default_num = Nicorepo::Cli::Config::Default::NUM
+        conf.num.should eq(default_num)
+      end
+    end
+  end
+
+  describe "#num" do
+    let(:conf) { Nicorepo::Cli::Config.new }
+
+    context "without argument" do
+      it "should return default nest limit for fetching" do
+        default_nest = Nicorepo::Cli::Config::Default::NEST
+        conf.nest.should eq(default_nest)
+      end
+    end
+  end
+
 end
 
