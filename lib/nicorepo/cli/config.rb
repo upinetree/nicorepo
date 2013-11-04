@@ -35,7 +35,11 @@ class Nicorepo
       end
 
       def num
-        Default::NUM
+        if @params["general"].nil?
+          Default::NUM
+        else
+          @params["general"]["num"]
+        end
       end
 
       def nest

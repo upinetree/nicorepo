@@ -46,9 +46,24 @@ describe Nicorepo::Cli::Config do
     let(:conf) { Nicorepo::Cli::Config.new }
 
     context "without argument" do
-      it "should return default number for fetching" do
-        default_num = Nicorepo::Cli::Config::Default::NUM
-        conf.num.should eq(default_num)
+      context "when 'general' num is NOT defined" do
+        it "should return default num for fetching" do
+          conf.stub!(:open).and_return({"mail" => "hoge", "pass" => "fuga"})
+          conf.read
+
+          default_num = Nicorepo::Cli::Config::Default::NUM
+          conf.num.should eq(default_num)
+        end
+      end
+
+      context "when 'general' num is defined" do
+        it "should return defined num for fetching" do
+          defined_num = 20
+          conf.stub!(:open).and_return({"general" => {"num" => defined_num}, "mail" => "hoge", "pass" => "fuga"})
+          conf.read
+
+          conf.num.should eq(defined_num)
+        end
       end
     end
   end
