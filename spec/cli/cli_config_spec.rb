@@ -72,9 +72,24 @@ describe Nicorepo::Cli::Config do
     let(:conf) { Nicorepo::Cli::Config.new }
 
     context "without argument" do
-      it "should return default nest limit for fetching" do
-        default_nest = Nicorepo::Cli::Config::Default::NEST
-        conf.nest.should eq(default_nest)
+      context "when 'general' nest is NOT defined" do
+        it "should return default nest limit for fetching" do
+          conf.stub!(:open).and_return({"mail" => "hoge", "pass" => "fuga"})
+          conf.read
+
+          default_nest = Nicorepo::Cli::Config::Default::NEST
+          conf.nest.should eq(default_nest)
+        end
+      end
+
+      context "when 'general' nest is defined" do
+        it "should return default nest limit for fetching" do
+          default_nest = 10
+          conf.stub!(:open).and_return({"general" => {"nest" => default_nest}, "mail" => "hoge", "pass" => "fuga"})
+          conf.read
+
+          conf.nest.should eq(default_nest)
+        end
       end
     end
   end
