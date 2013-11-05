@@ -68,7 +68,7 @@ describe Nicorepo::Cli::Config do
     end
   end
 
-  describe "#num" do
+  describe "#nest" do
     let(:conf) { Nicorepo::Cli::Config.new }
 
     context "without argument" do
