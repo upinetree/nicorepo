@@ -45,24 +45,49 @@ describe Nicorepo::Cli::Config do
   describe "#num" do
     let(:conf) { Nicorepo::Cli::Config.new }
 
-    context "without argument" do
-      context "when 'general' num is NOT defined" do
-        it "should return default num for fetching" do
-          conf.stub!(:open).and_return({"mail" => "hoge", "pass" => "fuga"})
-          conf.read
+    context "with 'all' command" do
+      context "when 'all' num is NOT defined" do
+        context "and 'general' num is NOT defined" do
+          it "should return default num" do
+            conf.stub!(:open).and_return({"mail" => "hoge", "pass" => "fuga"})
+            conf.read
 
-          default_num = Nicorepo::Cli::Config::Default::NUM
-          conf.num.should eq(default_num)
+            default_num = Nicorepo::Cli::Config::Default::NUM
+            conf.num("all").should eq(default_num)
+          end
+        end
+
+        context "and 'general' num is defined" do
+          it "should return defined 'general' num" do
+            defined_num = 20
+            conf.stub!(:open).and_return({"general" => {"num" => defined_num}, "mail" => "hoge", "pass" => "fuga"})
+            conf.read
+
+            conf.num("all").should eq(defined_num)
+          end
         end
       end
 
-      context "when 'general' num is defined" do
-        it "should return defined num for fetching" do
-          defined_num = 20
-          conf.stub!(:open).and_return({"general" => {"num" => defined_num}, "mail" => "hoge", "pass" => "fuga"})
-          conf.read
+      context "when 'all' num is defined" do
+        context "and 'general' num is NOT defined" do
+          it "should return defined 'all' num" do
+            defined_num = 20
+            conf.stub!(:open).and_return({"all" => {"num" => defined_num}, "mail" => "hoge", "pass" => "fuga"})
+            conf.read
 
-          conf.num.should eq(defined_num)
+            conf.num("all").should eq(defined_num)
+          end
+        end
+
+        context "and 'general' num is defined" do
+          it "should return defined 'all' num" do
+            all_num = 20
+            general_num = 15
+            conf.stub!(:open).and_return({"general" => {"num" => general_num}, "all" => {"num" => all_num}, "mail" => "hoge", "pass" => "fuga"})
+            conf.read
+
+            conf.num("all").should eq(all_num)
+          end
         end
       end
     end

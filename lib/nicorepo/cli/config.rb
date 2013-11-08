@@ -34,12 +34,15 @@ class Nicorepo
         return {mail: @params["mail"], pass: @params["pass"]}
       end
 
-      def num
-        if @params["general"].nil?
-          Default::NUM
+      def num(cmd)
+        n = if @params[cmd]
+          @params[cmd]["num"]
         else
-          @params["general"]["num"]
+          # use general value if 'cmd' is not defined in config
+          @params["general"]["num"] if @params["general"]
         end
+
+        n.nil? ? Default::NUM : n
       end
 
       def nest
