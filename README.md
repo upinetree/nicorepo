@@ -8,9 +8,8 @@
 
 # 環境とか
 
-- ruby 2.0.0p0
-- macで確認（たぶんWindowsだとスクリプトが文字化けする）
-- 依存Gemは`mechanize`と`launchy`
+- ruby 2.0.0p247
+- 依存Gem: `mechanize`, `launchy`
 
 
 # 使い方
@@ -27,6 +26,7 @@ config.yamlをnicorepoフォルダに作成して、下記のように記述し�
 
     mail: your@mail
     pass: your_password
+
 
 ### command
 
@@ -53,6 +53,24 @@ config.yamlをnicorepoフォルダに作成して、下記のように記述し�
 
 `all`や`videos`でニコレポを表示すると、各ログの最初に連番が振られます。
 その連番を`open`に指定すると、対象のURLをブラウザで開きます。
+
+
+### config.yaml
+
+config.yamlでは、アカウントの設定の他に、取得するログの数、探しに行くページの数をコマンドごとに設定することが出来ます。
+設定項目は以下のとおりです。
+
+    general: コマンド全体に定義した数を設定します
+    all, videos, lives: それぞれのコマンドに定義した数を設定します。generalより優先します
+
+（例）
+
+    general:
+      num: 20
+      nest: 5
+    videos:
+      num: 5
+      nest: 10
 
 
 ## ライブラリ

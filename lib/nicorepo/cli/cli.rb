@@ -1,20 +1,20 @@
 require 'launchy'
 require 'readline'
-require 'yaml'
 
 class Nicorepo
 
   class Cli
 
     class LogExistenceError < StandardError; end
-    class AccountError < StandardError; end
 
     def initialize
       @repo = Nicorepo.new
       @logs = nil
+      @conf = Nicorepo::Cli::Config.new
     end
 
     def run(argv)
+      configure
       cmd, num, nest = parse(argv)
       help if cmd == 'help'
 
@@ -25,7 +25,7 @@ class Nicorepo
         disp logs
       else
         case cmd
-        when 'interactive', 'i' then interactive_run
+        when 'interactive'  then interactive_run
         else help
         end
       end
@@ -43,25 +43,13 @@ class Nicorepo
           disp @logs
         else
           case cmd
-          when 'open', 'o' then open_url(@logs, num)
-          when 'login'     then login
-          when 'exit'      then return true
+          when 'open'   then open_url(@logs, num)
+          when 'login'  then login
+          when 'exit'   then return true
           else help_interactive; next
           end
         end
       end
-    end
-
-    def account
-      root = File.expand_path('../../../', __FILE__)
-      begin
-        confs = open(File.join(root, 'config.yaml')) { |f| YAML.load(f.read) }
-      rescue
-        raise AccountError
-      end
-     
-      raise AccountError if confs["mail"].nil? || confs["pass"].nil?
-      return {mail: confs["mail"], pass: confs["pass"]}
     end
 
     # options is now just for testing
@@ -83,21 +71,28 @@ class Nicorepo
 
     private
 
+    def configure
+      begin
+        @conf.read
+      rescue Nicorepo::Cli::Config::ReadError
+        warn "config read error: please make config.yaml"
+        exit 1
+      rescue Nicorepo::Cli::Config::AccountError
+        warn "config read error: please enter mail and pass to config.yaml"
+        exit 1
+      end
+    end
+
     def parse(argv)
-      cmd  = argv.shift  || 'help'
-      num  = (argv.shift || 10).to_i
-      nest = (argv.shift ||  3).to_i
+      cmd  = translate(argv.shift  || 'help')
+      num  = (argv.shift || @conf.num(cmd)).to_i
+      nest = (argv.shift || @conf.nest(cmd)).to_i
 
       return cmd, num, nest
     end
 
     def login
-      begin
-        acc  = account
-      rescue AccountError
-        warn "config read error: please enter mail and pass to config.yaml"
-        exit 1
-      end
+      acc  = @conf.account
 
       begin
         @repo.login(acc[:mail], acc[:pass])
@@ -114,13 +109,23 @@ class Nicorepo
       logs = nil
 
       case cmd
-      when 'all',    'a' then logs = @repo.all    num
-      when 'videos', 'v' then logs = @repo.videos num, nest
-      when 'lives',  'l' then logs = @repo.lives  num, nest
+      when 'all'    then logs = @repo.all    num
+      when 'videos' then logs = @repo.videos num, nest
+      when 'lives'  then logs = @repo.lives  num, nest
       else return nil
       end
 
       return logs
+    end
+
+    ALIAS = {"a" => "all", "v" => "videos", "l" => "lives",
+             "o" => "open", "i" => "interactive"}
+    def translate(cmd)
+      if ALIAS.has_key?(cmd)
+        ALIAS[cmd]
+      else
+        cmd
+      end
     end
 
     def help

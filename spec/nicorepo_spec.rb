@@ -1,10 +1,12 @@
-require 'nicorepo'
 require 'spec_helper'
 
 describe Nicorepo do
+
+  include Helper
+
   before(:all) do
     @nicorepo = Nicorepo.new
-    @account = account
+    @account = right_account
 
     @nicorepo.login(@account[:mail], @account[:pass])
   end
