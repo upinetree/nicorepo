@@ -84,7 +84,7 @@ class Nicorepo
     end
 
     def parse(argv)
-      cmd  = argv.shift  || 'help'
+      cmd  = translate(argv.shift  || 'help')
       num  = (argv.shift || @conf.num(cmd)).to_i
       nest = (argv.shift || @conf.nest(cmd)).to_i
 
@@ -116,6 +116,15 @@ class Nicorepo
       end
 
       return logs
+    end
+
+    ALIAS = {"a" => "all", "v" => "videos", "l" => "lives"}
+    def translate(cmd)
+      if ALIAS.has_key?(cmd)
+        ALIAS[cmd]
+      else
+        cmd
+      end
     end
 
     def help
