@@ -45,12 +45,14 @@ class Nicorepo
         n.nil? ? Default::NUM : n
       end
 
-      def nest
-        if @params["general"].nil?
-          Default::NEST
+      def nest(cmd)
+        n = if @params[cmd]
+          @params[cmd]["nest"]
         else
-          @params["general"]["nest"]
+          @params["general"]["nest"] if @params["general"]
         end
+
+        n.nil? ? Default::NEST : n
       end
     end
   

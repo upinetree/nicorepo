@@ -86,7 +86,7 @@ class Nicorepo
     def parse(argv)
       cmd  = argv.shift  || 'help'
       num  = argv.shift.to_i || @conf.num(cmd)
-      nest = (argv.shift || @conf.nest).to_i
+      nest = argv.shift.to_i || @conf.nest(cmd)
 
       return cmd, num, nest
     end

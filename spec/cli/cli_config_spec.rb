@@ -96,24 +96,49 @@ describe Nicorepo::Cli::Config do
   describe "#nest" do
     let(:conf) { Nicorepo::Cli::Config.new }
 
-    context "without argument" do
-      context "when 'general' nest is NOT defined" do
-        it "should return default nest limit for fetching" do
-          conf.stub!(:open).and_return({"mail" => "hoge", "pass" => "fuga"})
-          conf.read
+    context "with 'all' command" do
+      context "when 'all' nest is NOT defined" do
+        context "and 'general' nest is NOT defined" do
+          it "should return default nest" do
+            conf.stub!(:open).and_return({"mail" => "hoge", "pass" => "fuga"})
+            conf.read
 
-          default_nest = Nicorepo::Cli::Config::Default::NEST
-          conf.nest.should eq(default_nest)
+            default_nest = Nicorepo::Cli::Config::Default::NEST
+            conf.nest("all").should eq(default_nest)
+          end
+        end
+
+        context "and 'general' nest is defined" do
+          it "should return defined 'general' nest" do
+            defined_nest = 10
+            conf.stub!(:open).and_return({"general" => {"nest" => defined_nest}, "mail" => "hoge", "pass" => "fuga"})
+            conf.read
+
+            conf.nest("all").should eq(defined_nest)
+          end
         end
       end
 
-      context "when 'general' nest is defined" do
-        it "should return default nest limit for fetching" do
-          default_nest = 10
-          conf.stub!(:open).and_return({"general" => {"nest" => default_nest}, "mail" => "hoge", "pass" => "fuga"})
-          conf.read
+      context "when 'all' nest is defined" do
+        context "and 'general' nest is NOT defined" do
+          it "should return defined 'all' nest" do
+            defined_nest = 10
+            conf.stub!(:open).and_return({"all" => {"nest" => defined_nest}, "mail" => "hoge", "pass" => "fuga"})
+            conf.read
 
-          conf.nest.should eq(default_nest)
+            conf.nest("all").should eq(defined_nest)
+          end
+        end
+
+        context "and 'general' nest is defined" do
+          it "should return defined 'all' nest" do
+            all_nest = 10
+            general_nest = 5
+            conf.stub!(:open).and_return({"general" => {"nest" => general_nest}, "all" => {"nest" => all_nest}, "mail" => "hoge", "pass" => "fuga"})
+            conf.read
+
+            conf.nest("all").should eq(all_nest)
+          end
         end
       end
     end
