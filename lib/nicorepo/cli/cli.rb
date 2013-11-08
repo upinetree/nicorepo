@@ -25,7 +25,7 @@ class Nicorepo
         disp logs
       else
         case cmd
-        when 'interactive', 'i' then interactive_run
+        when 'interactive'  then interactive_run
         else help
         end
       end
@@ -43,9 +43,9 @@ class Nicorepo
           disp @logs
         else
           case cmd
-          when 'open', 'o' then open_url(@logs, num)
-          when 'login'     then login
-          when 'exit'      then return true
+          when 'open'   then open_url(@logs, num)
+          when 'login'  then login
+          when 'exit'   then return true
           else help_interactive; next
           end
         end
@@ -109,16 +109,17 @@ class Nicorepo
       logs = nil
 
       case cmd
-      when 'all',    'a' then logs = @repo.all    num
-      when 'videos', 'v' then logs = @repo.videos num, nest
-      when 'lives',  'l' then logs = @repo.lives  num, nest
+      when 'all'    then logs = @repo.all    num
+      when 'videos' then logs = @repo.videos num, nest
+      when 'lives'  then logs = @repo.lives  num, nest
       else return nil
       end
 
       return logs
     end
 
-    ALIAS = {"a" => "all", "v" => "videos", "l" => "lives"}
+    ALIAS = {"a" => "all", "v" => "videos", "l" => "lives",
+             "o" => "open", "i" => "interactive"}
     def translate(cmd)
       if ALIAS.has_key?(cmd)
         ALIAS[cmd]
