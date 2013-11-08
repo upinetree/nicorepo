@@ -13,3 +13,10 @@ module Helper
     {mail: mail, pass: pass}
   end
 end
+
+module CliHelper
+  def conf_init(conf, params)
+    conf.stub!(:open).and_return(params)
+    conf.read
+  end
+end
