@@ -5,7 +5,7 @@ class Nicorepo
 
   module URL
     LOGIN = 'https://secure.nicovideo.jp/secure/login?site=niconico'
-    REPO_ALL = 'http://rd.nicovideo.jp/cc/my/zerotopall'
+    REPO_ALL = 'http://www.nicovideo.jp/my/top'
   end
 
   class LoginError < StandardError; end
