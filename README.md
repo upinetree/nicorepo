@@ -56,27 +56,27 @@ And each commad has default value so it is simply used like,
 
 **Commands**
 
-command  | alias | params        | description
----------|-------|---------------|-------------------------------------
-  all    | a     | disp_num      | all reports
-  videos | v     | disp_num nest | only videos
-  lives  | l     | disp_num nest | only lives
-  open   | o     | log_num       | open the specified report url in the browser
-  login  |       |               | re-login
-  exit   |       |               | exit nicorepo
+command  | alias | params                 | description
+---------|-------|------------------------|-------------------------------------
+  all    | a     | request_num            | all reports
+  videos | v     | request_num limit_page | only videos
+  lives  | l     | request_num limit_page | only lives
+  open   | o     | report_num             | open the specified report url in the browser
+  login  |       |                        | re-login
+  exit   |       |                        | exit nicorepo
 
 ### Configuration
 
-You can configure default `disp_num` and `nest` by adding `~/.nicorepo.yaml` if you want.
+You can configure default `request_num` and `limit_page` by adding `~/.nicorepo.yaml` if you want.
 Please refer the sample `nicorepo/.nicorepo.yaml.sample` or copy it to your home directory.
 
 **Sample**
 
 ```
-num:
+request_num:
   general: 20
   videos: 5
-nest:
+limit_page:
   general: 5
   videos: 10
 ```
