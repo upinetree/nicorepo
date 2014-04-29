@@ -33,7 +33,7 @@ class Nicorepo
       # fetch current reports
       page = @parser.parse_page(url)
       begin
-        reports = page[:nodes].map { |node| Report.new(node) }
+        reports = page[:reports_attrs].map { |attrs| Report.new(attrs) }
       rescue
         raise ReportsAccessError
       end
@@ -70,3 +70,4 @@ class Nicorepo
     end
   end
 end
+
