@@ -17,27 +17,15 @@ describe Nicorepo do
     context "with wrong account" do
       it "should raise error" do
         repo = Nicorepo.new
-        lambda{ repo.login('test', 'testpass') }.should raise_error(Nicorepo::LoginError)
+        expect{ repo.login('test', 'testpass') }.to raise_error(Nicorepo::LoginError)
       end
     end
   end
 
   describe "#all" do
-    context "without arguments" do
-      it "should return 20 reports" do
-        @nicorepo.all.should have(20).reports
-      end
-    end
-
     context "with 5" do
       it "should return 5 reports" do
         @nicorepo.all(5).should have(5).reports
-      end
-    end
-
-    context "with 30" do
-      it "should return 30 reports" do
-        @nicorepo.all(30).should have(30).reports
       end
     end
 
@@ -49,19 +37,13 @@ describe Nicorepo do
   end
 
   describe "#videos" do
-    context "without arguments" do
-      it "should return 3 reports at the most" do
-        @nicorepo.videos.should have_at_most(3).reports
-      end
-
+    context "with req_num = 5, page_nest_max = 3" do
       it "should return only video reports" do
         videos = @nicorepo.videos
-        except_video = videos.reject{ |v| v.kind =~ /video/ }
-        except_video.size.should eq 0
+        not_videos = videos.reject{ |v| v.kind =~ /video/ }
+        not_videos.size.should eq 0
       end
-    end
 
-    context "with req_num = 5, page_nest_max = 3" do
       it "should return 5 reports at the most" do
         @nicorepo.videos(5, 3).should have_at_most(5).reports
       end
@@ -71,8 +53,8 @@ describe Nicorepo do
   describe "#lives" do
     it "should return only live reports" do
       lives = @nicorepo.lives
-      except_live = lives.reject{ |l| l.kind =~ /live/ }
-      except_live.size.should eq 0
+      not_lives = lives.reject{ |l| l.kind =~ /live/ }
+      not_lives.size.should eq 0
     end
   end
 end
