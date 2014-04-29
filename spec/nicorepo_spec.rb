@@ -1,14 +1,10 @@
 require 'spec_helper'
 
 describe Nicorepo do
-
-  include Helper
-
   before(:all) do
+    mail, pass = Netrc.read["nicovideo.jp"]
     @nicorepo = Nicorepo.new
-    @account = right_account
-
-    @nicorepo.login(@account[:mail], @account[:pass])
+    @nicorepo.login(mail, pass)
   end
 
   describe "#login" do
@@ -24,7 +20,7 @@ describe Nicorepo do
         lambda{ repo.login('test', 'testpass') }.should raise_error(Nicorepo::LoginError)
       end
     end
- end
+  end
 
   describe "#all" do
     context "without arguments" do
