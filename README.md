@@ -1,109 +1,94 @@
 # Nicorepo
-ニコニコ動画のニコレポをスクレイピングするためのライブラリとスクリプトです。
 
-- 欲しいニコレポログを、欲しい数だけ取得できます（例：投稿動画を30個）
-- 複数ページにわたってログを取得できます
-- スクリプトを使ってターミナル上からニコレポ確認したり、ブラウザにURL送ったりできます
+Nicorepo is scraper and filter of nicorepo on nicovideo.
 
+- filter reports by kind of them
+- specify number and pages to fetch reports
+- open url in browser
 
-# 環境とか
+It requires ruby 2.0.0.
 
-- ruby 2.0.0p247
-- 依存Gem: `mechanize`, `launchy`
+## Installation
 
+Add this line to your application's Gemfile:
 
-# 使い方
+    gem 'nicorepo'
 
-## スクリプト
+And then execute:
 
-bin/nicorepoを呼び出します。本体はlib/nicorepo/cli.rbです。
+    $ bundle
 
-    $ nicorepo command params
+Or install it yourself as:
 
-なお、起動前にアカウントを設定する必要があります。
+    $ gem install nicorepo
 
-config.yamlをnicorepoフォルダに作成して、下記のように記述してください。
+## Usage
 
-    mail: your@mail
-    pass: your_password
+### Authentication
 
+Nicorepo supports reading netrc file.
 
-### command
+Add following lines to your netrc file (`~/.netrc`)
 
-    all, a    [disp_num]         : すべてのニコレポを表示
-    videos, v [disp_num] [nest]  : 投稿動画のみ
-    lives, l  [disp_num] [nest]  : 生放送のみ
-    interactive, i               : 対話モード（後述）
+```
+machine nicovideo.jp
+  login your@email.account
+  password your-password
+```
 
-- [disp\_num]の数だけニコレポを表示します。省略すると10個表示します
+### Start nicorepo cli as interactive mode
 
-- [nest]は探しに行くページの最大数です。[nest]以上探しても[disp\_num]の数だけ見つけられない場合は諦めます。省略すると3ページです
+    $ nicorepo i
 
-- それぞれエイリアスが設定されています。all なら a だけで認識します
+You can use following commands in interactive cli to fetch nicorepos.
+For example, if you want 20 video reports by searcing over 5 pages, the command will be,
 
+    > video 20 5
 
-### 対話モード
+Or you can also use aliases.
 
-`nicorepo i`で起動します。
-対話モードは上記コマンドに加えて、下記の対話用コマンドが使用できます。
+    > v 20 5
 
-    open, o [log_num]  : 指定のニコレポログの対象URLをブラウザで開く
-    login              : 再ログイン
-    exit               : 対話モード終了
+And each commad has default value so it is simply used like,
 
-`all`や`videos`でニコレポを表示すると、各ログの最初に連番が振られます。
-その連番を`open`に指定すると、対象のURLをブラウザで開きます。
+    # it means `video 10 3`
+    > v
 
+**Commands**
 
-### config.yaml
+command  | alias | params        | description
+---------|-------|---------------|-------------------------------------
+  all    | a     | disp_num      | all reports
+  videos | v     | disp_num nest | only videos
+  lives  | l     | disp_num nest | only lives
+  open   | o     | log_num       | open the specified report url in the browser
+  login  |       |               | re-login
+  exit   |       |               | exit nicorepo
 
-config.yamlでは、アカウントの設定の他に、取得するログの数、探しに行くページの数をコマンドごとに設定することが出来ます。
-設定項目は以下のとおりです。
+### Configuration
 
-    general: コマンド全体に定義した数を設定します
-    all, videos, lives: それぞれのコマンドに定義した数を設定します。generalより優先します
+You can configure default `disp_num` and `nest` by adding `~/.nicorepo.yaml` if you want.
+Please refer the sample `nicorepo/.nicorepo.yaml.sample` or copy it to your home directory.
 
-（例）
+**Sample**
 
-    general:
-      num: 20
-      nest: 5
-    videos:
-      num: 5
-      nest: 10
+```
+num:
+  general: 20
+  videos: 5
+nest:
+  general: 5
+  videos: 10
+```
 
+- `general`: used in all commands
+- `all`, `videos`, `lives`: used in each command, has priority than `general`
 
-## ライブラリ
+## Contributing
 
-ニコニコ動画へのログインは次のような感じです。
+1. Fork it ( https://github.com/upinetree/nicorepo/fork )
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Commit your changes (`git commit -am 'Add some feature'`)
+4. Push to the branch (`git push origin my-new-feature`)
+5. Create a new Pull Request
 
-    repo = Nicorepo.new
-    repo.login(mail, pass)
-
-以降のニコレポ取得ですが、現在は3種類だけメソッドにしています。
-
-    all(req_num = LOGS_PER_PAGE)
-    videos(req_num = 3, page_nest_max = 5)
-    lives(req_num = 3, page_nest_max = 5)
-
-取得したニコレポは`Nicorepo::Log`のArrayで返ってきます。
-中身は、
-
-    @body   # 本文。「〜さんが…しました」
-    @title  # ログ対象の名前。動画名や生放送名など
-    @url    # ログ対象のURL。動画URLや生放送URLなど
-    @author # ログ発生元ユーザ
-    @kind   # ログの種類。CSSクラス名から抜粋したもの
-    @date   # ログ発生日時
-
-filtered_byを使うと、@kindを指定の条件でフィルタしてログを取得します。
-
-    filtered_by(filter, req_num = LOGS_PER_PAGE, page_nest_max = 1)
-
-例えば：
-
-    logs = filtered_by('clip')
-    logs = filtered_by('seiga')
-    logs = filtered_by('mylist')
-
-のような感じです。
