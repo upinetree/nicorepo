@@ -1,11 +1,12 @@
 require 'launchy'
 require 'readline'
+require 'netrc'
 
 class Nicorepo
-
   class Cli
 
     class LogExistenceError < StandardError; end
+    class LoginAccountError < StandardError; end
 
     def initialize
       @repo = Nicorepo.new
@@ -68,18 +69,13 @@ class Nicorepo
       return true
     end
 
-
     private
 
     def configure
       begin
         @conf.read
       rescue Nicorepo::Cli::Config::ReadError
-        warn "config read error: please make config.yaml"
-        exit 1
-      rescue Nicorepo::Cli::Config::AccountError
-        warn "config read error: please enter mail and pass to config.yaml"
-        exit 1
+        raise "config read error: please make config.yaml"
       end
     end
 
@@ -92,13 +88,14 @@ class Nicorepo
     end
 
     def login
-      acc  = @conf.account
+      n = Netrc.read
+      mail, pass = n["nicovideo.jp"]
+      raise LoginAccountError, "machine nicovideo.jp is not defined in .netrc" if mail.nil? || pass.nil?
 
       begin
-        @repo.login(acc[:mail], acc[:pass])
+        @repo.login(mail, pass)
       rescue
-        warn "invalid mail or pass: mail = #{acc[:mail]}"
-        exit 1
+        raise LoginAccountError, "invalid mail or pass: mail = #{mail}"
       end
     end
 
@@ -161,7 +158,6 @@ class Nicorepo
         puts "    '#{log.title}' (#{log.url})"
       end
     end
-
   end
 end
 

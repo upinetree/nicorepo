@@ -1,13 +1,10 @@
 require 'yaml'
 
 class Nicorepo
-
   class Cli
-  
     class Config
 
       class ReadError < StandardError; end
-      class AccountError < StandardError; end
 
       module Default
         NUM  = 10
@@ -26,12 +23,6 @@ class Nicorepo
         rescue
           raise ReadError
         end
-
-        raise AccountError if @params["mail"].nil? || @params["pass"].nil?
-      end
-
-      def account
-        return {mail: @params["mail"], pass: @params["pass"]}
       end
 
       def num(cmd)
@@ -55,7 +46,5 @@ class Nicorepo
         n.nil? ? Default::NEST : n
       end
     end
-  
   end
-
 end
