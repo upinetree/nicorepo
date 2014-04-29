@@ -12,11 +12,8 @@ class Nicorepo
     attr_reader :reports
     def_delegators :@reports, :size
 
-    def initialize(agent)
-      # TODO: agentの代わりにparserを渡すようにする
-      #       agentやcssの情報に左右されずに取得できるようにしたい
-      @agent = agent
-      @parser = Parser.new(@agent, TOP_URL)
+    def initialize(parser)
+      @parser = parser
       @reports = []
     end
 

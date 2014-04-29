@@ -13,6 +13,7 @@ class Nicorepo
     @agent = Mechanize.new
     @agent.ssl_version = 'SSLv3'
     @agent.request_headers = { 'accept-language' => 'ja-JP', 'content-language' => 'ja-JP' }
+    @parser = Parser.new(@agent)
   end
 
   def login(mail, pass)
@@ -22,15 +23,15 @@ class Nicorepo
 
   def all(req_num = PER_PAGE)
     page_nest_max = req_num / PER_PAGE + 1
-    Reports.new(@agent).fetch(req_num, page_nest_max)
+    Reports.new(@parser).fetch(req_num, page_nest_max)
   end
 
   def videos(req_num = 3, page_nest_max = 5)
-    VideoReports.new(@agent).fetch(req_num, page_nest_max)
+    VideoReports.new(@parser).fetch(req_num, page_nest_max)
   end
 
   def lives(req_num = 3, page_nest_max = 5)
-    LiveReports.new(@agent).fetch(req_num, page_nest_max)
+    LiveReports.new(@parser).fetch(req_num, page_nest_max)
   end
 end
 
