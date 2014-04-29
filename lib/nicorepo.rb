@@ -1,5 +1,5 @@
 require 'mechanize'
-require_relative 'nicorepo/log.rb'
+require 'nicorepo/log'
 
 class Nicorepo
 
@@ -83,5 +83,6 @@ class Nicorepo
 
 end
 
-require_relative 'nicorepo/cli/cli.rb'
-require_relative 'nicorepo/cli/config.rb'
+require "nicorepo/version"
+require 'nicorepo/cli/cli'
+require 'nicorepo/cli/config'

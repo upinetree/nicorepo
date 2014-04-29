@@ -1,88 +1,50 @@
 require 'spec_helper'
 
 describe Nicorepo::Cli::Config do
+  let(:conf) { Nicorepo::Cli::Config.new }
 
-  include CliHelper
-
-  describe "#read" do
-
-    let(:conf) { Nicorepo::Cli::Config.new }
-
-    context "when config.yaml not found" do
-      it "should raise ReadError" do
-        conf.stub!(:open).and_raise(StandardError)
-        expect{conf.read}.to raise_error(Nicorepo::Cli::Config::ReadError)
-      end
-    end
-
-    context "when config.yaml does not have 'mail'" do
-      it "should raise error" do
-        conf.stub!(:open).and_return({"pass" => "hoge"})
-        expect{conf.read}.to raise_error(Nicorepo::Cli::Config::AccountError)
-      end
-    end
-
-    context "when config.yaml does not have 'pass'" do
-      it "should raise error" do
-        conf.stub!(:open).and_return({"mail" => "hoge"})
-        expect{conf.read}.to raise_error(Nicorepo::Cli::Config::AccountError)
-      end
-    end
-
-  end
-
-  describe "#account" do
-
-    let(:conf) { Nicorepo::Cli::Config.new }
-
-    context "when config.yaml has 'mail' and 'pass'" do
-      it "should return the hash 'mail' and 'pass'" do
-        conf_init(conf, {"mail" => "hoge", "pass" => "fuga"})
-        conf.account.should include(:mail => "hoge", :pass => "fuga")
-      end
-    end
+  before do
+    Nicorepo::Cli::Config.any_instance.stub(:load_config).and_return(config_values)
   end
 
   describe "#num" do
-    let(:conf) { Nicorepo::Cli::Config.new }
-
     context "with 'all' command" do
-      context "when 'all' num is NOT defined" do
-        context "and 'general' num is NOT defined" do
-          it "should return default num" do
-            conf_init(conf, {"mail" => "hoge", "pass" => "fuga"})
+      context "'all' num is NOT defined" do
+        context "'general' num is NOT defined" do
+          let(:config_values) { {} }
 
-            default_num = Nicorepo::Cli::Config::Default::NUM
+          it "should return default num" do
+            default_num = conf.send(:defaults)["num"]["general"]
             conf.num("all").should eq(default_num)
           end
         end
 
-        context "and 'general' num is defined" do
-          it "should return defined 'general' num" do
-            defined_num = 20
-            conf_init(conf, {"general" => {"num" => defined_num}, "mail" => "hoge", "pass" => "fuga"})
+        context "'general' num is defined" do
+          let(:general_num) { 20 }
+          let(:config_values) { { "num" => { "general" => general_num } } }
 
-            conf.num("all").should eq(defined_num)
+          it "should return defined 'general' num" do
+            conf.num("all").should eq(general_num)
           end
         end
       end
 
-      context "when 'all' num is defined" do
-        context "and 'general' num is NOT defined" do
-          it "should return defined 'all' num" do
-            defined_num = 20
-            conf_init(conf, {"all" => {"num" => defined_num}, "mail" => "hoge", "pass" => "fuga"})
+      context "'all' num is defined" do
+        context "'general' num is NOT defined" do
+          let(:all_num) { 20 }
+          let(:config_values) { { "num" => { "all" => all_num } } }
 
-            conf.num("all").should eq(defined_num)
+          it "should return defined 'all' num" do
+            conf.num("all").should eq(all_num)
           end
         end
 
-        context "and 'general' num is defined" do
-          it "should return defined 'all' num" do
-            all_num = 20
-            general_num = 15
-            conf_init(conf, {"general" => {"num" => general_num}, "all" => {"num" => all_num}, "mail" => "hoge", "pass" => "fuga"})
+        context "'general' num is defined" do
+          let(:all_num) { 20 }
+          let(:general_num) { 15 }
+          let(:config_values) { { "num" => { "all" => all_num, "general" => general_num } } }
 
+          it "should return defined 'all' num" do
             conf.num("all").should eq(all_num)
           end
         end
@@ -91,51 +53,19 @@ describe Nicorepo::Cli::Config do
   end
 
   describe "#nest" do
-    let(:conf) { Nicorepo::Cli::Config.new }
-
     context "with 'all' command" do
-      context "when 'all' nest is NOT defined" do
-        context "and 'general' nest is NOT defined" do
-          it "should return default nest" do
-            conf_init(conf, {"mail" => "hoge", "pass" => "fuga"})
+      context "'all' nest is defined" do
+        context "'general' nest is defined" do
+          let(:all_nest) { 10 }
+          let(:general_nest) { 5 }
+          let(:config_values) { { "nest" => { "all" => all_nest, "general" => general_nest } } }
 
-            default_nest = Nicorepo::Cli::Config::Default::NEST
-            conf.nest("all").should eq(default_nest)
-          end
-        end
-
-        context "and 'general' nest is defined" do
-          it "should return defined 'general' nest" do
-            defined_nest = 10
-            conf_init(conf, {"general" => {"nest" => defined_nest}, "mail" => "hoge", "pass" => "fuga"})
-
-            conf.nest("all").should eq(defined_nest)
-          end
-        end
-      end
-
-      context "when 'all' nest is defined" do
-        context "and 'general' nest is NOT defined" do
           it "should return defined 'all' nest" do
-            defined_nest = 10
-            conf_init(conf, {"all" => {"nest" => defined_nest}, "mail" => "hoge", "pass" => "fuga"})
-
-            conf.nest("all").should eq(defined_nest)
-          end
-        end
-
-        context "and 'general' nest is defined" do
-          it "should return defined 'all' nest" do
-            all_nest = 10
-            general_nest = 5
-            conf_init(conf, {"general" => {"nest" => general_nest}, "all" => {"nest" => all_nest}, "mail" => "hoge", "pass" => "fuga"})
-
             conf.nest("all").should eq(all_nest)
           end
         end
       end
     end
   end
-
 end
 

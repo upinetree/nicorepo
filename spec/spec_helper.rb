@@ -1,4 +1,5 @@
 require 'nicorepo'
+require 'pry'
 
 module Helper
   def right_account
@@ -14,9 +15,3 @@ module Helper
   end
 end
 
-module CliHelper
-  def conf_init(conf, params)
-    conf.stub!(:open).and_return(params)
-    conf.read
-  end
-end
