@@ -6,45 +6,40 @@ class Nicorepo
 
       class ReadError < StandardError; end
 
-      module Default
-        NUM  = 10
-        NEST = 3
-      end
-
       def initialize
-        @params = {}
-      end
-
-      def read
-        root = File.expand_path('../../../../', __FILE__)
-
-        begin
-          @params = open(File.join(root, 'config.yaml')) { |f| YAML.load(f.read) }
-        rescue
-          raise ReadError
-        end
+        params = defaults.merge(load_config)
+        @nums  = params["num"]
+        @nests = params["nest"]
       end
 
       def num(cmd)
-        n = if @params[cmd]
-          @params[cmd]["num"]
-        else
-          # use general value if 'cmd' is not defined in config
-          @params["general"]["num"] if @params["general"]
-        end
-
-        n.nil? ? Default::NUM : n
+        @nums[cmd] || @nums["general"]
       end
 
       def nest(cmd)
-        n = if @params[cmd]
-          @params[cmd]["nest"]
-        else
-          @params["general"]["nest"] if @params["general"]
-        end
+        @nests[cmd] || @nests["general"]
+      end
 
-        n.nil? ? Default::NEST : n
+      private
+
+      def load_config
+        filename = File.expand_path('~/.nicorepo.yaml')
+        return {} unless File.exist?(filename)
+
+        open(filename) { |f| YAML.load(f.read) }
+      end
+
+      def defaults
+        {
+          "num" => {
+            "general" => 10
+          },
+          "nest" => {
+            "general" => 3
+          }
+        }
       end
     end
   end
 end
+

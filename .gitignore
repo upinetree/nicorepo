@@ -21,4 +21,4 @@ tmp
 *.a
 mkmf.log
 spec/resource/account.txt
-config.yaml
+

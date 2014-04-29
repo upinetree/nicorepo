@@ -15,7 +15,6 @@ class Nicorepo
     end
 
     def run(argv)
-      configure
       cmd, num, nest = parse(argv)
       help if cmd == 'help'
 
@@ -70,14 +69,6 @@ class Nicorepo
     end
 
     private
-
-    def configure
-      begin
-        @conf.read
-      rescue Nicorepo::Cli::Config::ReadError
-        raise "config read error: please make config.yaml"
-      end
-    end
 
     def parse(argv)
       cmd  = translate(argv.shift  || 'help')
