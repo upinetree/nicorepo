@@ -5,12 +5,12 @@ require 'netrc'
 class Nicorepo
   class Cli
 
-    class LogExistenceError < StandardError; end
+    class ReportExistenceError < StandardError; end
     class LoginAccountError < StandardError; end
 
     def initialize
       @repo = Nicorepo.new
-      @logs = nil
+      @reports = nil
       @conf = Nicorepo::Cli::Config.new
     end
 
@@ -20,9 +20,9 @@ class Nicorepo
 
       login
 
-      logs = exec_command(cmd, request_num, limit_page)
-      if logs
-        disp logs
+      reports = exec_command(cmd, request_num, limit_page)
+      if reports
+        disp reports
       else
         case cmd
         when 'interactive'  then interactive_run
@@ -37,13 +37,13 @@ class Nicorepo
         argv = Readline::readline("nicorepo > ", true).split
         cmd, request_num, limit_page = parse(argv)
 
-        logs = exec_command(cmd, request_num, limit_page)
-        if logs
-          @logs = logs
-          disp @logs
+        reports = exec_command(cmd, request_num, limit_page)
+        if reports
+          @reports = reports
+          disp @reports
         else
           case cmd
-          when 'open'   then open_url(@logs, request_num)
+          when 'open'   then open_url(@reports, request_num)
           when 'login'  then login
           when 'exit'   then return true
           else help_interactive; next
@@ -53,11 +53,11 @@ class Nicorepo
     end
 
     # options is now just for testing
-    def open_url(logs, request_num, options = {})
-      url = logs[request_num - 1].url
+    def open_url(reports, request_num, options = {})
+      url = reports[request_num - 1].url
       if url.nil?
-        puts "log existence error: please fetch logs"
-        raise LogExistenceError
+        puts "report existence error: please fetch reports"
+        raise ReportExistenceError
       end
 
       Launchy.open(url, options) do |exception|
@@ -90,19 +90,19 @@ class Nicorepo
     end
 
     # it returns
-    #   - logs  if succeed to exec exepcted command
-    #   - nil   if unexpected command given
+    #   - reports if succeed to exec exepcted command
+    #   - nil     if unexpected command given
     def exec_command(cmd, request_num, limit_page)
-      logs = nil
+      reports = nil
 
       case cmd
-      when 'all'    then logs = @repo.all    request_num
-      when 'videos' then logs = @repo.videos request_num, limit_page
-      when 'lives'  then logs = @repo.lives  request_num, limit_page
+      when 'all'    then reports = @repo.all    request_num
+      when 'videos' then reports = @repo.videos request_num, limit_page
+      when 'lives'  then reports = @repo.lives  request_num, limit_page
       else return nil
       end
 
-      return logs
+      return reports
     end
 
     ALIAS = {"a" => "all", "v" => "videos", "l" => "lives",
@@ -127,7 +127,7 @@ class Nicorepo
       puts '    usage: command [params]'
       puts '    command:'
       help_commands
-      puts '        open, o [log_num] - open url of given log number'
+      puts '        open, o [report_num] - open url of given report number'
       puts '        login'
       puts '        exit'
     end
@@ -142,10 +142,10 @@ class Nicorepo
       EOS
     end
 
-    def disp(logs)
-      logs.each.with_index(1) do |log, i|
-        puts "[#{i}] #{log.body} on #{log.date.to_s}"
-        puts "    '#{log.title}' (#{log.url})"
+    def disp(reports)
+      reports.each.with_index(1) do |report, i|
+        puts "[#{i}] #{report.body} on #{report.date.to_s}"
+        puts "    '#{report.title}' (#{report.url})"
       end
     end
   end
