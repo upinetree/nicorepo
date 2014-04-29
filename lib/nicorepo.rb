@@ -3,14 +3,11 @@ require 'nicorepo/log'
 
 class Nicorepo
 
-  module URL
-    LOGIN = 'https://secure.nicovideo.jp/secure/login?site=niconico'
-    REPO_ALL = 'http://www.nicovideo.jp/my/top'
-  end
-
   class LoginError < StandardError; end
   class LogsAccessError < StandardError; end
 
+  LOGIN_URL = 'https://secure.nicovideo.jp/secure/login?site=niconico'
+  TOP_URL = 'http://www.nicovideo.jp/my/top'
   LOGS_PER_PAGE = 20
 
   attr_reader :agent
@@ -22,7 +19,7 @@ class Nicorepo
   end
 
   def login(mail, pass)
-    page = @agent.post(URL::LOGIN, mail: mail, password: pass)
+    page = @agent.post(LOGIN_URL, mail: mail, password: pass)
     raise LoginError, "Failed to login" if page.header["x-niconico-authflag"] == '0'
   end
 
@@ -45,7 +42,7 @@ class Nicorepo
 
   private
 
-  def fetch_logs(req_num, page_nest_max, filter = nil, url = URL::REPO_ALL)
+  def fetch_logs(req_num, page_nest_max, filter = nil, url = TOP_URL)
     return [] unless page_nest_max > 0
 
     # fetch current logs
