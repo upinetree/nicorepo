@@ -13,7 +13,10 @@ class Nicorepo
     def_delegators :@reports, :size
 
     def initialize(agent)
+      # TODO: agentの代わりにparserを渡すようにする
+      #       agentやcssの情報に左右されずに取得できるようにしたい
       @agent = agent
+      @parser = Parser.new(@agent, TOP_URL)
       @reports = []
     end
 
@@ -31,9 +34,9 @@ class Nicorepo
       return [] unless page_nest_max > 0
 
       # fetch current reports
-      page = @agent.get(url)
+      @parser.move_to(url)
       begin
-        reports = report_nodes(page).map { |node| Report.new(node) }
+        reports = @parser.report_nodes.map { |node| Report.new(node) }
       rescue
         raise ReportsAccessError
       end
@@ -46,8 +49,7 @@ class Nicorepo
       # recursively fetch next reports
       if reports.size < req_num then
         begin
-          next_url = page.search('a.next-page-link').first['href']
-          next_reports = fetch_recursively(req_num - reports.size, page_nest_max - 1, filter, next_url)
+          next_reports = fetch_recursively(req_num - reports.size, page_nest_max - 1, filter, @parser.next_url)
         rescue
           return reports
         else
@@ -56,10 +58,6 @@ class Nicorepo
       end
 
       return reports
-    end
-
-    def report_nodes(page)
-      page.search('div.timeline/div.log')
     end
   end
 

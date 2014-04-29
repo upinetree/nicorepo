@@ -1,4 +1,26 @@
 class Nicorepo
+  class Parser
+    def initialize(agent, url = nil)
+      @agent = agent
+      @page = url ? @agent.get(url) : nil
+    end
+
+    def move_to(url)
+      @page = @agent.get(url)
+    end
+
+    def perse_report
+    end
+
+    def report_nodes
+      @page.search('div.timeline/div.log')
+    end
+
+    def next_url
+      @page.search('a.next-page-link').first['href']
+    end
+  end
+
   class Report
     attr_accessor :body, :title, :url, :author, :kind, :date
 
