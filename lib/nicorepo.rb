@@ -83,5 +83,6 @@ class Nicorepo
 
 end
 
+require "nicorepo/version"
 require_relative 'nicorepo/cli/cli.rb'
 require_relative 'nicorepo/cli/config.rb'
