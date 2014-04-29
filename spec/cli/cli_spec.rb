@@ -17,7 +17,7 @@ describe Nicorepo::Cli do
           Nicorepo::Cli::Config.any_instance.stub(:account).and_return({mail: "invalid@mail.com", pass: "invalid_pass"})
           cli.run([ 'i' ])
         rescue SystemExit => se
-          se.status.should eq 1 
+          se.status.should eq 1
           $stderr.string.should match /invalid mail or pass/
         end
       end
@@ -37,8 +37,8 @@ describe Nicorepo::Cli do
       end
 
       context "with command 'lives'" do
-        it "should recieve logs of live" do
-          Nicorepo.any_instance.should_receive(:lives).and_return([Nicorepo::Log.new])
+        it "should recieve reports of live" do
+          Nicorepo.any_instance.should_receive(:lives).and_return([Nicorepo::Report.new])
           cli.run([ 'lives' ])
         end
       end
@@ -49,7 +49,7 @@ describe Nicorepo::Cli do
     context "when entered 'exit'" do
       it "should return true" do
         cli = Nicorepo::Cli.new
-        Readline.stub!(:readline) { 'exit' }
+        Readline.stub(:readline) { 'exit' }
         cli.interactive_run.should be_true
       end
     end
@@ -59,22 +59,22 @@ describe Nicorepo::Cli do
     context "with 1" do
       before do
         @cli = Nicorepo::Cli.new
-        @logs = [ Nicorepo::Log.new ]
+        @reports = [ Nicorepo::Report.new ]
       end
 
-      it "should succeed to open url in browser with first log's url" do
-        @logs.first.url = 'http://www.nicovideo.jp'
-        expect{ @cli.open_url(@logs, 1, {dry_run: true}) }.to be_true
+      it "should succeed to open url in browser with first report's url" do
+        @reports.first.url = 'http://www.nicovideo.jp'
+        expect{ @cli.open_url(@reports, 1, {dry_run: true}) }.to be_true
       end
 
       it "should raise error when url is nil" do
-        @logs.first.url = nil
-        expect{ @cli.open_url(@logs, 1, {dry_run: true}) }.to raise_error
+        @reports.first.url = nil
+        expect{ @cli.open_url(@reports, 1, {dry_run: true}) }.to raise_error
       end
 
       it "should raise error when url is wrongs" do
-        @logs.first.url = 'hoge://piyo'
-        expect{ @cli.open_url(@logs, 1, {dry_run: true}) }.to raise_error
+        @reports.first.url = 'hoge://piyo'
+        expect{ @cli.open_url(@reports, 1, {dry_run: true}) }.to raise_error
       end
     end
   end

@@ -1,10 +1,10 @@
 require 'mechanize'
-require 'nicorepo/log'
+require 'nicorepo/report'
 
 class Nicorepo
 
   class LoginError < StandardError; end
-  class LogsAccessError < StandardError; end
+  class ReportsAccessError < StandardError; end
 
   LOGIN_URL = 'https://secure.nicovideo.jp/secure/login?site=niconico'
   TOP_URL = 'http://www.nicovideo.jp/my/top'
@@ -25,7 +25,7 @@ class Nicorepo
 
   def all(req_num = LOGS_PER_PAGE)
     page_nest_max = req_num / LOGS_PER_PAGE + 1
-    fetch_logs(req_num, page_nest_max)
+    fetch(req_num, page_nest_max)
   end
 
   def videos(req_num = 3, page_nest_max = 5)
@@ -37,44 +37,45 @@ class Nicorepo
   end
 
   def filtered_by(filter, req_num = LOGS_PER_PAGE, page_nest_max = 1)
-    fetch_logs(req_num, page_nest_max, filter)
+    fetch(req_num, page_nest_max, filter)
   end
 
   private
 
-  def fetch_logs(req_num, page_nest_max, filter = nil, url = TOP_URL)
+  # TODO: Reportsに移譲
+  def fetch(req_num, page_nest_max, filter = nil, url = TOP_URL)
     return [] unless page_nest_max > 0
 
-    # fetch current logs
+    # fetch current reports
     page = @agent.get(url)
     begin
-      logs = log_nodes(page).map { |node| Log.new(node) }
+      reports = report_nodes(page).map { |node| Report.new(node) }
     rescue
-      raise LogsAccessError
+      raise ReportsAccessError
     end
-    logs.select!{ |log| log.kind =~ /#{filter}/ } if filter
+    reports.select!{ |report| report.kind =~ /#{filter}/ } if filter
 
-    if logs.size > req_num then
-      return logs[0, req_num]
+    if reports.size > req_num then
+      return reports[0, req_num]
     end
 
-    # fetch next logs
-    if logs.size < req_num then
+    # fetch next reports
+    if reports.size < req_num then
       next_url = page.search('div.next-page/a').first['href']
       begin
-        next_logs = fetch_logs(req_num - logs.size, page_nest_max - 1, filter, next_url)
+        next_reports = fetch(req_num - reports.size, page_nest_max - 1, filter, next_url)
       rescue
-        warn '*** logs access error occurs ***'
-        return logs
+        warn '*** reports access error occurs ***'
+        return reports
       else
-        logs += next_logs unless next_logs.nil?
+        reports += next_reports unless next_reports.nil?
       end
     end
 
-    return logs
+    return reports
   end
 
-  def log_nodes(page)
+  def report_nodes(page)
     page.search('div.timeline/div.log')
   end
 

@@ -1,6 +1,5 @@
 class Nicorepo
-
-  class Log
+  class Report
     attr_accessor :body, :title, :url, :author, :kind, :date
 
     def initialize(node = nil)
@@ -15,6 +14,7 @@ class Nicorepo
 
     private
 
+    # TODO: ReportPerserの仕事にする
     def parse_body(node)
       node.search('div.log-body').first.inner_text.gsub(/(\t|\r|\n)/, "")
     end
@@ -47,7 +47,5 @@ class Nicorepo
       d = node.search('div.log-footer/div.log-footer-inner/a.log-footer-date/time').first['datetime']
       Time.xmlschema(d).localtime
     end
- 
   end
-
 end
