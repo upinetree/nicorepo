@@ -37,7 +37,7 @@ describe Nicorepo do
   end
 
   describe "#videos" do
-    context "with req_num = 5, page_nest_max = 3" do
+    context "with req_num = 5, limit_page = 3" do
       it "should return only video reports" do
         videos = @nicorepo.videos
         not_videos = videos.reject{ |v| v.kind =~ /video/ }

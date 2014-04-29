@@ -18,18 +18,18 @@ class Nicorepo
       @reports = []
     end
 
-    def fetch(req_num, page_nest_max)
-      @reports = fetch_recursively(req_num, page_nest_max)
+    def fetch(req_num, limit_page)
+      @reports = fetch_recursively(req_num, limit_page)
     end
 
-    def fetch_with_filtere(filter, req_num, page_nest_max)
-      @reports = fetch_recursively(req_num, page_nest_max, filter)
+    def fetch_with_filtere(filter, req_num, limit_page)
+      @reports = fetch_recursively(req_num, limit_page, filter)
     end
 
     private
 
-    def fetch_recursively(req_num, page_nest_max, filter = nil, url = TOP_URL)
-      return [] unless page_nest_max > 0
+    def fetch_recursively(req_num, limit_page, filter = nil, url = TOP_URL)
+      return [] unless limit_page > 0
 
       # fetch current reports
       page = @parser.parse_page(url)
@@ -47,7 +47,7 @@ class Nicorepo
       # recursively fetch next reports
       if reports.size < req_num then
         begin
-          next_reports = fetch_recursively(req_num - reports.size, page_nest_max - 1, filter, page[:next_url])
+          next_reports = fetch_recursively(req_num - reports.size, limit_page - 1, filter, page[:next_url])
         rescue
           return reports
         else
@@ -60,14 +60,14 @@ class Nicorepo
   end
 
   class VideoReports < Reports
-    def fetch(req_num, page_nest_max)
-      fetch_with_filtere('video-upload', req_num, page_nest_max)
+    def fetch(req_num, limit_page)
+      fetch_with_filtere('video-upload', req_num, limit_page)
     end
   end
 
   class LiveReports < Reports
-    def fetch(req_num, page_nest_max)
-      fetch_with_filtere('live', req_num, page_nest_max)
+    def fetch(req_num, limit_page)
+      fetch_with_filtere('live', req_num, limit_page)
     end
   end
 end

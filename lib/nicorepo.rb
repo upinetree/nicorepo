@@ -22,16 +22,16 @@ class Nicorepo
   end
 
   def all(req_num = PER_PAGE)
-    page_nest_max = req_num / PER_PAGE + 1
-    Reports.new(@parser).fetch(req_num, page_nest_max)
+    limit_page = req_num / PER_PAGE + 1
+    Reports.new(@parser).fetch(req_num, limit_page)
   end
 
-  def videos(req_num = 3, page_nest_max = 5)
-    VideoReports.new(@parser).fetch(req_num, page_nest_max)
+  def videos(req_num = 3, limit_page = 5)
+    VideoReports.new(@parser).fetch(req_num, limit_page)
   end
 
-  def lives(req_num = 3, page_nest_max = 5)
-    LiveReports.new(@parser).fetch(req_num, page_nest_max)
+  def lives(req_num = 3, limit_page = 5)
+    LiveReports.new(@parser).fetch(req_num, limit_page)
   end
 end
 
