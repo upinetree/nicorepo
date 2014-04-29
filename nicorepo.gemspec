@@ -7,9 +7,9 @@ Gem::Specification.new do |spec|
   spec.version       = Nicorepo::VERSION
   spec.authors       = ["upinetree"]
   spec.email         = ["essequake@gmail.com"]
-  spec.summary       = %q{Nicorepo scraper}
-  spec.description   = %q{Nicorepo scraper}
-  spec.homepage      = ""
+  spec.summary       = %q{Simple nicorepo scraper}
+  spec.description   = %q{Scrapes and filters nicorepo reports from nicovideo.}
+  spec.homepage      = "https://github.com/upinetree/nicorepo"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
@@ -19,8 +19,8 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = ">= 2.0.0"
 
-  spec.add_dependency "mechanize"
-  spec.add_dependency "launchy"
+  spec.add_dependency "mechanize", "~> 2.7"
+  spec.add_dependency "launchy", "~> 2.4"
 
   spec.add_development_dependency "bundler", "~> 1.6"
   spec.add_development_dependency "pry"
