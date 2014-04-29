@@ -15,12 +15,12 @@ class Nicorepo
     end
 
     def run(argv)
-      cmd, num, nest = parse(argv)
+      cmd, request_num, limit_page = parse(argv)
       help if cmd == 'help'
 
       login
 
-      logs = exec_command(cmd, num, nest)
+      logs = exec_command(cmd, request_num, limit_page)
       if logs
         disp logs
       else
@@ -35,15 +35,15 @@ class Nicorepo
     def interactive_run
       loop do
         argv = Readline::readline("nicorepo > ", true).split
-        cmd, num, nest = parse(argv)
+        cmd, request_num, limit_page = parse(argv)
 
-        logs = exec_command(cmd, num, nest)
+        logs = exec_command(cmd, request_num, limit_page)
         if logs
           @logs = logs
           disp @logs
         else
           case cmd
-          when 'open'   then open_url(@logs, num)
+          when 'open'   then open_url(@logs, request_num)
           when 'login'  then login
           when 'exit'   then return true
           else help_interactive; next
@@ -53,8 +53,8 @@ class Nicorepo
     end
 
     # options is now just for testing
-    def open_url(logs, num, options = {})
-      url = logs[num - 1].url
+    def open_url(logs, request_num, options = {})
+      url = logs[request_num - 1].url
       if url.nil?
         puts "log existence error: please fetch logs"
         raise LogExistenceError
@@ -72,10 +72,10 @@ class Nicorepo
 
     def parse(argv)
       cmd  = translate(argv.shift  || 'help')
-      num  = (argv.shift || @conf.num(cmd)).to_i
-      nest = (argv.shift || @conf.nest(cmd)).to_i
+      request_num  = (argv.shift || @conf.request_num(cmd)).to_i
+      limit_page = (argv.shift || @conf.limit_page(cmd)).to_i
 
-      return cmd, num, nest
+      return cmd, request_num, limit_page
     end
 
     def login
@@ -92,13 +92,13 @@ class Nicorepo
     # it returns
     #   - logs  if succeed to exec exepcted command
     #   - nil   if unexpected command given
-    def exec_command(cmd, num, nest)
+    def exec_command(cmd, request_num, limit_page)
       logs = nil
 
       case cmd
-      when 'all'    then logs = @repo.all    num
-      when 'videos' then logs = @repo.videos num, nest
-      when 'lives'  then logs = @repo.lives  num, nest
+      when 'all'    then logs = @repo.all    request_num
+      when 'videos' then logs = @repo.videos request_num, limit_page
+      when 'lives'  then logs = @repo.lives  request_num, limit_page
       else return nil
       end
 
@@ -134,11 +134,11 @@ class Nicorepo
 
     def help_commands
       puts <<-"EOS"
-        all, a    [disp_num]
-        videos, v [disp_num] [nest]
-        lives, l  [disp_num] [nest]
-          *disp_num - number of logs to display at once (default = 10)
-          *nest     - max nesting level of pages to search (default = 3)
+        all, a    [request_num]
+        videos, v [request_num] [limit_page]
+        lives, l  [request_num] [limit_page]
+          *request_num - number of reports to fetch from nicovideo (default = 10)
+          *limit_page  - limit page to fetch reports(default = 3)
       EOS
     end
 

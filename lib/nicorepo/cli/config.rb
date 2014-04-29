@@ -8,16 +8,16 @@ class Nicorepo
 
       def initialize
         params = defaults.merge(load_config)
-        @nums  = params["num"]
-        @nests = params["nest"]
+        @request_nums  = params["request_num"]
+        @limit_pages = params["limit_page"]
       end
 
-      def num(cmd)
-        @nums[cmd] || @nums["general"]
+      def request_num(cmd)
+        @request_nums[cmd] || @request_nums["general"]
       end
 
-      def nest(cmd)
-        @nests[cmd] || @nests["general"]
+      def limit_page(cmd)
+        @limit_pages[cmd] || @limit_pages["general"]
       end
 
       private
@@ -31,10 +31,10 @@ class Nicorepo
 
       def defaults
         {
-          "num" => {
+          "request_num" => {
             "general" => 10
           },
-          "nest" => {
+          "limit_page" => {
             "general" => 3
           }
         }

@@ -1,7 +1,7 @@
-num:
+reqest_num:
   general: 20
   videos: 5
-nest:
+limit_page:
   general: 5
   videos: 10
 
