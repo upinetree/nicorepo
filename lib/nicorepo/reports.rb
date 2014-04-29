@@ -31,9 +31,9 @@ class Nicorepo
       return [] unless page_nest_max > 0
 
       # fetch current reports
-      @parser.move_to(url)
+      page = @parser.parse_page(url)
       begin
-        reports = @parser.report_nodes.map { |node| Report.new(node) }
+        reports = page[:nodes].map { |node| Report.new(node) }
       rescue
         raise ReportsAccessError
       end
@@ -46,7 +46,7 @@ class Nicorepo
       # recursively fetch next reports
       if reports.size < req_num then
         begin
-          next_reports = fetch_recursively(req_num - reports.size, page_nest_max - 1, filter, @parser.next_url)
+          next_reports = fetch_recursively(req_num - reports.size, page_nest_max - 1, filter, page[:next_url])
         rescue
           return reports
         else

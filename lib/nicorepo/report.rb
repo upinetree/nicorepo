@@ -1,23 +1,28 @@
 class Nicorepo
   class Parser
-    def initialize(agent, url = nil)
+    def initialize(agent)
       @agent = agent
-      @page = url ? @agent.get(url) : nil
     end
 
-    def move_to(url)
-      @page = @agent.get(url)
+    def parse_page(url)
+      page = @agent.get(url)
+      {
+        nodes: report_nodes(page),
+        next_url: next_url(page)
+      }
     end
 
-    def perse_report
+    def parse_report
     end
 
-    def report_nodes
-      @page.search('div.timeline/div.log')
+    private
+
+    def report_nodes(page)
+      page.search('div.timeline/div.log')
     end
 
-    def next_url
-      @page.search('a.next-page-link').first['href']
+    def next_url(page)
+      page.search('a.next-page-link').first['href']
     end
   end
 
