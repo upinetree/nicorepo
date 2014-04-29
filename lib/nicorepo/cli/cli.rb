@@ -79,8 +79,7 @@ class Nicorepo
     end
 
     def login
-      n = Netrc.read
-      mail, pass = n["nicovideo.jp"]
+      mail, pass = Netrc.read["nicovideo.jp"]
       raise LoginAccountError, "machine nicovideo.jp is not defined in .netrc" if mail.nil? || pass.nil?
 
       begin
