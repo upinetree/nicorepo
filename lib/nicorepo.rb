@@ -21,17 +21,17 @@ class Nicorepo
     raise LoginError, "Failed to login" if page.header["x-niconico-authflag"] == '0'
   end
 
-  def all(reqest_num = PER_PAGE)
-    limit_page = reqest_num / PER_PAGE + 1
-    Reports.new(@parser).fetch(reqest_num, limit_page)
+  def all(request_num = PER_PAGE)
+    limit_page = request_num / PER_PAGE + 1
+    Reports.new(@parser).fetch(request_num, limit_page)
   end
 
-  def videos(reqest_num = 3, limit_page = 5)
-    VideoReports.new(@parser).fetch(reqest_num, limit_page)
+  def videos(request_num = 3, limit_page = 5)
+    VideoReports.new(@parser).fetch(request_num, limit_page)
   end
 
-  def lives(reqest_num = 3, limit_page = 5)
-    LiveReports.new(@parser).fetch(reqest_num, limit_page)
+  def lives(request_num = 3, limit_page = 5)
+    LiveReports.new(@parser).fetch(request_num, limit_page)
   end
 end
 
