@@ -20,7 +20,7 @@ class Nicorepo
       @reports = fetch_recursively(request_num, limit_page)
     end
 
-    def fetch_with_filtere(filter, request_num, limit_page)
+    def fetch_and_select_with(filter, request_num, limit_page)
       @reports = fetch_recursively(request_num, limit_page, filter)
     end
 
@@ -45,13 +45,13 @@ class Nicorepo
 
   class VideoReports < Reports
     def fetch(request_num, limit_page)
-      fetch_with_filtere('video-upload', request_num, limit_page)
+      fetch_and_select_with('video-upload', request_num, limit_page)
     end
   end
 
   class LiveReports < Reports
     def fetch(request_num, limit_page)
-      fetch_with_filtere('live', request_num, limit_page)
+      fetch_and_select_with('live', request_num, limit_page)
     end
   end
 end
