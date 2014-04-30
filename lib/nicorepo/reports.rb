@@ -6,8 +6,6 @@ class Nicorepo
   class Reports
     extend Forwardable
 
-    class ReportsAccessError < StandardError; end
-
     TOP_URL = 'http://www.nicovideo.jp/my/top'
 
     attr_reader :reports
@@ -31,13 +29,9 @@ class Nicorepo
     def fetch_recursively(request_num, limit_page, filter = nil, url = TOP_URL)
       return [] unless limit_page > 0
 
-      # fetch current reports
+      # fetch current page reports
       page = @parser.parse_page(url)
-      begin
-        reports = page[:reports_attrs].map { |attrs| Report.new(attrs) }
-      rescue
-        raise ReportsAccessError
-      end
+      reports = page[:reports_attrs].map { |attrs| Report.new(attrs) }
       reports.select!{ |report| report.kind =~ /#{filter}/ } if filter
 
       if reports.size > request_num then
