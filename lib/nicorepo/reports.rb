@@ -34,22 +34,17 @@ class Nicorepo
       reports = page[:reports_attrs].map { |attrs| Report.new(attrs) }
       reports.select!{ |report| report.kind =~ /#{filter}/ } if filter
 
-      if reports.size > request_num then
-        return reports[0, request_num]
+      return case
+      when reports.size > request_num
+        reports[0, request_num]
+      when reports.size < request_num
+        # recursively fetch next reports
+        next_reports = fetch_recursively(request_num - reports.size, limit_page - 1, filter, page[:next_url])
+        reports += next_reports unless next_reports.nil?
+        reports
+      else
+        reports
       end
-
-      # recursively fetch next reports
-      if reports.size < request_num then
-        begin
-          next_reports = fetch_recursively(request_num - reports.size, limit_page - 1, filter, page[:next_url])
-        rescue
-          return reports
-        else
-          reports += next_reports unless next_reports.nil?
-        end
-      end
-
-      return reports
     end
   end
 
