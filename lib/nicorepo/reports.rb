@@ -15,8 +15,18 @@ class Nicorepo
       @reports = []
     end
 
-    def fetch(request_num, limit_page)
-      filter = selected_kind
+    def fetch(request_num, limit_page, since: nil)
+      filter = {}
+      filter[:kind] = selected_kind
+      filter[:since] =
+        case since
+        when String
+          Time.parse since
+        when Time
+          since
+        else
+          nil
+        end
       @reports = fetch_recursively(request_num, limit_page, filter)
     end
 
@@ -26,14 +36,14 @@ class Nicorepo
       nil
     end
 
-    def fetch_recursively(request_num, limit_page, filter = nil, url = TOP_URL)
+    def fetch_recursively(request_num, limit_page, filter = {}, url = TOP_URL)
       return [] unless limit_page > 0
 
       # fetch current page reports
       page = @parser.parse_page(url)
       reports = page[:reports_attrs].map { |attrs| Report.new(attrs) }
-      reports.select!{ |report| report.kind =~ /#{filter}/ } if filter
-
+      reports.select!{ |report| report.date > filter[:since] } if filter[:since]
+      reports.select!{ |report| report.kind =~ /#{filter[:kind]}/ } if filter[:kind]
       return reports[0, request_num] if reports.size >= request_num
 
       # recursively fetch next reports
