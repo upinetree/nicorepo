@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-describe Nicorepo::Cli::Config do
-  let(:conf) { Nicorepo::Cli::Config.new }
+describe Nicorepo::Cli::Configuration do
+  let(:conf) { Nicorepo::Cli::Configuration.new }
 
   before do
-    Nicorepo::Cli::Config.any_instance.stub(:load_config).and_return(config_values)
+    Nicorepo::Cli::Configuration.any_instance.stub(:load_config).and_return(config_values)
   end
 
   describe "#request_num" do

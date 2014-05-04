@@ -1,8 +1,8 @@
 require 'yaml'
 
 class Nicorepo
-  class Cli
-    class Config
+  module Cli
+    class Configuration
 
       class ReadError < StandardError; end
 

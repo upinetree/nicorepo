@@ -2,5 +2,5 @@
 
 require 'nicorepo'
 
-Nicorepo::Cli.new.run(ARGV)
+Nicorepo::Cli::Runner.run
 
