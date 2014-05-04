@@ -2,6 +2,7 @@ require 'thor'
 require 'netrc'
 require 'launchy'
 require 'readline'
+require 'nicorepo/cli/config'
 
 class Nicorepo
   module Cli

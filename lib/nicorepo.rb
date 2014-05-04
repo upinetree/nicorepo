@@ -1,5 +1,6 @@
 require 'mechanize'
 require 'nicorepo/reports'
+require 'nicorepo/parser'
 
 class Nicorepo
   class LoginError < StandardError; end
@@ -35,7 +36,6 @@ class Nicorepo
   end
 end
 
-require "nicorepo/version"
 require 'nicorepo/cli/cli'
-require 'nicorepo/cli/config'
+require "nicorepo/version"
 

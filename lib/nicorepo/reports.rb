@@ -1,5 +1,4 @@
 require 'nicorepo/report'
-require 'nicorepo/parser'
 require 'forwardable'
 
 class Nicorepo
