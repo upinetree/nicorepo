@@ -43,27 +43,38 @@ machine nicovideo.jp
 You can use following commands in interactive cli to fetch nicorepos.
 For example, if you want 20 video reports by searcing over 5 pages, the command will be,
 
-    > video 20 5
+    > video -n20 -p5
 
 Or you can also use aliases.
 
-    > v 20 5
+    > v -n20 -p5
 
-And each commad has default value so it is simply used like,
+`-n` and `-p` are specifing options.
+You can omit it as you like then each commad uses default value.
 
-    # it means `video 10 3`
     > v
+    # => `video -n10 -p3`
+    > v -n20
+    # => `video -n20 -p3`
+    > v -p5
+    # => `video -n20 -p5`
 
 **Commands**
 
-command  | alias | params                 | description
----------|-------|------------------------|-------------------------------------
-  all    | a     | request_num            | all reports
-  videos | v     | request_num limit_page | only videos
-  lives  | l     | request_num limit_page | only lives
-  open   | o     | report_num             | open the specified report url in the browser
-  login  |       |                        | re-login
-  exit   |       |                        | exit nicorepo
+command               | alias | description
+----------------------|-------|---------------------------------------------------------
+  all                 | a     | fetch all reports
+  videos              | v     | fetch only video reports
+  lives               | li    | fetch only live reports
+  show                | s     | show current reports
+  open REPORT-NUMBER  | o     | open the report url specified by number in your browser
+  help [COMMAND]      | h     | Describe available commands or one specific command
+  login               | lo    | re-login if your session is expired
+  exit                | e     | exit interactive prompt
+
+Some commands have specific options `-n, --request-num=N`, `-p, --limit-page=N`.
+Please check it out using `help [COMMAND]`.
+
 
 ### Configuration
 
