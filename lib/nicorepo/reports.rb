@@ -16,14 +16,15 @@ class Nicorepo
     end
 
     def fetch(request_num, limit_page)
-      @reports = fetch_recursively(request_num, limit_page)
-    end
-
-    def fetch_and_select_with(filter, request_num, limit_page)
+      filter = selected_kind
       @reports = fetch_recursively(request_num, limit_page, filter)
     end
 
     private
+
+    def selected_kind
+      nil
+    end
 
     def fetch_recursively(request_num, limit_page, filter = nil, url = TOP_URL)
       return [] unless limit_page > 0
@@ -43,14 +44,18 @@ class Nicorepo
   end
 
   class VideoReports < Reports
-    def fetch(request_num, limit_page)
-      fetch_and_select_with('video-upload', request_num, limit_page)
+    private
+
+    def selected_kind
+      'video-upload'
     end
   end
 
   class LiveReports < Reports
-    def fetch(request_num, limit_page)
-      fetch_and_select_with('live', request_num, limit_page)
+    private
+
+    def selected_kind
+      'live'
     end
   end
 end
