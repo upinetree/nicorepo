@@ -97,12 +97,12 @@ class Nicorepo
 
       desc "show", "show current reports"
       def show
+        # TODO: 古い=>新しい順のほうがopenしやすくて親切か
         current_reports.each.with_index(1) do |report, i|
-          # TODO: puts => say
-          puts "[#{i}] #{report.body} on #{report.date.to_s}"
-          puts "    '#{report.title}' (#{report.url})"
+          say "[#{i}] #{report.body} at #{report.date.to_s}"
+          say "     #{report.title} (#{report.url})", :green
         end
-        puts "* last fetch time: #{cached_at}"
+        say "* last fetch time: #{cached_at}", :blue
       end
 
       desc "open REPORT-NUMBER", "open the report url specified by number in your browser"
