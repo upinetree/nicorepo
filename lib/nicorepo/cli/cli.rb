@@ -98,7 +98,7 @@ class Nicorepo
       desc "show", "show current reports"
       def show
         # TODO: 古い=>新しい順のほうがopenしやすくて親切か
-        current_reports.each.with_index(1) do |report, i|
+        cached_reports.each.with_index(1) do |report, i|
           say "[#{i}] #{report.body} at #{report.date.to_s}"
           say "     #{report.title} (#{report.url})", :green
         end
@@ -125,9 +125,10 @@ class Nicorepo
         self.class.conf
       end
 
-      # TODO: current_reports => cached_reports
-      #       last_reports + cached_reports で分けると色分けできるがどうするか
-      def current_reports
+      # TODO: last_reports + cached_reports で分けるか？
+      #       メリット: 色分けできる、show時に--lastで最終取得分だけ表示できる
+      #       デメリット: 処理が多少面倒になる？
+      def cached_reports
         self.class.cache[:reports] ||= []
       end
 
@@ -136,12 +137,12 @@ class Nicorepo
       end
 
       def cache(reports)
-        current_reports.concat(reports)
+        cached_reports.concat(reports)
         self.class.cache[:cached_at] = Time.now
       end
 
       def open_numbered_link(request_num)
-        url = current_reports[request_num - 1].url
+        url = cached_reports[request_num - 1].url
         raise ReportExistenceError, "report existence error: please fetch reports" if url.nil?
 
         Launchy.open(url, options) do |exception|
