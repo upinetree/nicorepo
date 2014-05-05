@@ -21,16 +21,8 @@ class Nicorepo
       class ReportExistenceError < StandardError; end
 
       class << self
-        attr_accessor :cache
-        attr_reader   :repo, :conf
-
         def start(*)
-          @repo ||= Nicorepo.new
-          @conf ||= Nicorepo::Cli::Configuration.new
-          @cache ||= {}
-
-          login unless @repo.logined?
-
+          login unless repo.logined?
           super
         end
 
@@ -43,10 +35,22 @@ class Nicorepo
           mail, pass = Netrc.read["nicovideo.jp"]
           raise LoginAccountError, "machine nicovideo.jp is not defined in .netrc" if mail.nil? || pass.nil?
           begin
-            @repo.login(mail, pass)
+            repo.login(mail, pass)
           rescue
             raise LoginAccountError, "invalid mail or pass: mail = #{mail}"
           end
+        end
+
+        def repo
+          @repo ||= Nicorepo.new
+        end
+
+        def conf
+          @conf ||= Nicorepo::Cli::Configuration.new
+        end
+
+        def cache
+          @cache ||= {}
         end
       end
 
