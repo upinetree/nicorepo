@@ -21,13 +21,13 @@ class Nicorepo
       class ReportExistenceError < StandardError; end
 
       class << self
-        attr_accessor :reports
+        attr_accessor :cache
         attr_reader   :repo, :conf
 
         def start(*)
           @repo ||= Nicorepo.new
           @conf ||= Nicorepo::Cli::Configuration.new
-          @reports ||= []
+          @cache ||= {}
 
           login unless logined?
 
@@ -63,38 +63,46 @@ class Nicorepo
 
       desc "all", "fetch all reports"
       option :"request-num", type: :numeric, aliases: :n
+      option :"latest", type: :boolean, aliases: :l
       def all
         request_num = options[:"request-num"] || conf.request_num("all")
-        cache(repo.all(request_num))
+        request_options = options[:latest] ? { since: cached_at } : { since: nil }
+        cache(repo.all(request_num, request_options))
         show
       end
 
       desc "videos", "fetch only video reports"
       option :"request-num", type: :numeric, aliases: :n
       option :"limit-page", type: :numeric, aliases: :p
+      option :"latest", type: :boolean, aliases: :l
       def videos
         request_num = options[:"request-num"] || conf.request_num("videos")
         limit_page  = options[:"limit-page"]  || conf.limit_page("videos")
-        cache(repo.videos(request_num, limit_page))
+        request_options = options[:latest] ? { since: cached_at } : { since: nil }
+        cache(repo.videos(request_num, limit_page, request_options))
         show
       end
 
       desc "lives", "fetch only live reports"
       option :"request-num", type: :numeric, aliases: :n
       option :"limit-page", type: :numeric, aliases: :p
+      option :"latest", type: :boolean, aliases: :l
       def lives
         request_num = options[:"request-num"] || conf.request_num("lives")
         limit_page  = options[:"limit-page"]  || conf.limit_page("lives")
-        cache(repo.lives(request_num, limit_page))
+        request_options = options[:latest] ? { since: cached_at } : { since: nil }
+        cache(repo.lives(request_num, limit_page, request_options))
         show
       end
 
       desc "show", "show current reports"
       def show
         current_reports.each.with_index(1) do |report, i|
+          # TODO: puts => say
           puts "[#{i}] #{report.body} on #{report.date.to_s}"
           puts "    '#{report.title}' (#{report.url})"
         end
+        puts "* last fetch time: #{cached_at}"
       end
 
       desc "open REPORT-NUMBER", "open the report url specified by number in your browser"
@@ -117,12 +125,19 @@ class Nicorepo
         self.class.conf
       end
 
+      # TODO: current_reports => cached_reports
+      #       last_reports + cached_reports で分けると色分けできるがどうするか
       def current_reports
-        self.class.reports
+        self.class.cache[:reports] ||= []
+      end
+
+      def cached_at
+        self.class.cache[:cached_at]
       end
 
       def cache(reports)
-        self.class.reports = reports
+        current_reports.concat(reports)
+        self.class.cache[:cached_at] = Time.now
       end
 
       def open_numbered_link(request_num)
