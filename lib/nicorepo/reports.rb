@@ -43,14 +43,14 @@ class Nicorepo
       page = @parser.parse_page(url)
       reports = page[:reports_attrs].map { |attrs| Report.new(attrs) }
 
-      reports.select! { |report| report.kind =~ /#{filter[:kind]}/ } if filter[:kind]
-      if filter[:since] && reports.size > 0
+      if filter[:since]
         reach_oldest_page = (reports.last.date < filter[:since])
         reports.reject! { |report| report.date < filter[:since] }
-        return reports if reach_oldest_page
       end
+      reports.select! { |report| report.kind =~ /#{filter[:kind]}/ } if filter[:kind]
 
       return reports[0, request_num] if reports.size >= request_num
+      return reports if filter[:since] && reach_oldest_page
 
       # recursively fetch next reports
       next_reports = fetch_recursively(request_num - reports.size, limit_page - 1, filter, page[:next_url])
