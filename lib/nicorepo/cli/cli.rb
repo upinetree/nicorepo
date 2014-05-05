@@ -96,9 +96,11 @@ class Nicorepo
       end
 
       desc "show", "show current reports"
+      option :more, type: :boolean, aliases: :m
       def show
-        # TODO: 古い=>新しい順のほうがopenしやすくて親切か
-        cached_reports.each.with_index(1) do |report, i|
+        showed_reports = options[:more] ? cached_reports : cached_reports[0, recent_tail]
+        showed_reports.each.with_index(1) do |report, i|
+          say "--- MORE ---", :blue if i == recent_tail + 1
           say "[#{i}] #{report.body} at #{report.date.to_s}"
           say "     #{report.title} (#{report.url})", :green
         end
@@ -125,11 +127,12 @@ class Nicorepo
         self.class.conf
       end
 
-      # TODO: last_reports + cached_reports で分けるか？
-      #       メリット: 色分けできる、show時に--lastで最終取得分だけ表示できる
-      #       デメリット: 処理が多少面倒になる？
       def cached_reports
         self.class.cache[:reports] ||= []
+      end
+
+      def recent_tail
+        self.class.cache[:recent_tail]
       end
 
       def cached_at
@@ -137,7 +140,8 @@ class Nicorepo
       end
 
       def cache(reports)
-        cached_reports.concat(reports)
+        cached_reports.unshift(reports).flatten!
+        self.class.cache[:recent_tail] = reports.size
         self.class.cache[:cached_at] = Time.now
       end
 
