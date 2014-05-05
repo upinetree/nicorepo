@@ -15,11 +15,22 @@ class Nicorepo
     @agent.ssl_version = 'SSLv3'
     @agent.request_headers = { 'accept-language' => 'ja-JP', 'content-language' => 'ja-JP' }
     @parser = Parser.new(@agent)
+    @logined = false
   end
 
   def login(mail, pass)
     page = @agent.post(LOGIN_URL, mail: mail, password: pass)
-    raise LoginError, "Failed to login" if page.header["x-niconico-authflag"] == '0'
+    if page.header["x-niconico-authflag"] == '0'
+      raise LoginError, "Failed to login"
+    else
+      @logined = true
+    end
+  end
+
+  def logined?
+    # TODO: page.header["x-niconico-auth-flag"] をチェックする？
+    #       現状一度ログインしたらfalseにならない
+    @logined
   end
 
   def all(request_num = PER_PAGE, since: nil)

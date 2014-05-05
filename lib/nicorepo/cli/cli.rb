@@ -29,7 +29,7 @@ class Nicorepo
           @conf ||= Nicorepo::Cli::Configuration.new
           @cache ||= {}
 
-          login unless logined?
+          login unless @repo.logined?
 
           super
         end
@@ -47,12 +47,6 @@ class Nicorepo
           rescue
             raise LoginAccountError, "invalid mail or pass: mail = #{mail}"
           end
-          @logined = true
-        end
-
-        # TODO: Nicorepo側に持たせる
-        def logined?
-          @logined
         end
       end
 
