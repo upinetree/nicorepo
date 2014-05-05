@@ -39,12 +39,17 @@ class Nicorepo
     def fetch_recursively(request_num, limit_page, filter = {}, url = TOP_URL)
       return [] unless limit_page > 0
 
-      # TODO: dateによるselect結果がなかった場合、すぐreturnしたい
       # fetch current page reports
       page = @parser.parse_page(url)
       reports = page[:reports_attrs].map { |attrs| Report.new(attrs) }
-      reports.select!{ |report| report.date > filter[:since] } if filter[:since]
-      reports.select!{ |report| report.kind =~ /#{filter[:kind]}/ } if filter[:kind]
+
+      reports.select! { |report| report.kind =~ /#{filter[:kind]}/ } if filter[:kind]
+      if filter[:since] && reports.size > 0
+        reach_oldest_page = (reports.last.date < filter[:since])
+        reports.reject! { |report| report.date < filter[:since] }
+        return reports if reach_oldest_page
+      end
+
       return reports[0, request_num] if reports.size >= request_num
 
       # recursively fetch next reports
