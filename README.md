@@ -72,7 +72,7 @@ You can omit it as you like then each commad uses default value.
     > v -p5
     # => `video -n20 -p5`
 
-And also, you can use `-l, --latest`, `-h, --hours`, `-d, --days` options to find repots by the specific period.
+And also, you can use `-l, --latest`, `-h, --hours`, `-d, --days` options to find reports by the specific period.
 
     > all -l
     > lives -h 1
