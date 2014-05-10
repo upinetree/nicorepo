@@ -36,11 +36,24 @@ machine nicovideo.jp
   password your-password
 ```
 
-### Start nicorepo cli as interactive mode
+### Start nicorepo cli
 
-    $ nicorepo i
+    $ nicorepo
 
 You can use following commands in interactive cli to fetch nicorepos.
+
+command               | alias | description
+----------------------|-------|---------------------------------------------------------
+  all                 | a     | fetch all reports
+  videos              | v     | fetch only video reports
+  lives               | li    | fetch only live reports
+  show                | s     | show current reports
+  open REPORT-NUMBER  | o     | open the report url specified by number in your browser
+  help [COMMAND]      | h     | Describe available commands or one specific command
+  login               | lo    | re-login if your session is expired
+  exit                | e     | exit interactive prompt
+
+Some commands have specific options `-n, --request-num=N`, `-p, --limit-page=N`.
 For example, if you want 20 video reports by searcing over 5 pages, the command will be,
 
     > video -n20 -p5
@@ -59,22 +72,10 @@ You can omit it as you like then each commad uses default value.
     > v -p5
     # => `video -n20 -p5`
 
-**Commands**
+And also, you can use `-l, --latest`, `-h, --hours`, `-d, --days` options to find repots by the specific period.
 
-command               | alias | description
-----------------------|-------|---------------------------------------------------------
-  all                 | a     | fetch all reports
-  videos              | v     | fetch only video reports
-  lives               | li    | fetch only live reports
-  show                | s     | show current reports
-  open REPORT-NUMBER  | o     | open the report url specified by number in your browser
-  help [COMMAND]      | h     | Describe available commands or one specific command
-  login               | lo    | re-login if your session is expired
-  exit                | e     | exit interactive prompt
-
-Some commands have specific options `-n, --request-num=N`, `-p, --limit-page=N`.
-Please check it out using `help [COMMAND]`.
-
+    > all -l
+    > lives -h 1
 
 ### Configuration
 
