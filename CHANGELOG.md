@@ -1,3 +1,8 @@
+## 0.0.6 (2014/10/18)
+
+* Disable SSLv3 and use TLSv1 because of POODLE vulnerability
+* Support rspec3
+
 ## 0.0.5 (2014/05/11)
 
 ### Features
