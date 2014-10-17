@@ -12,7 +12,7 @@ class Nicorepo
 
   def initialize
     @agent = Mechanize.new
-    @agent.ssl_version = 'SSLv3'
+    @agent.ssl_version = 'TLSv1'
     @agent.request_headers = { 'accept-language' => 'ja-JP', 'content-language' => 'ja-JP' }
     @parser = Parser.new(@agent)
     @logined = false
