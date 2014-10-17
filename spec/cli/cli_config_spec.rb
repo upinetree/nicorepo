@@ -4,7 +4,7 @@ describe Nicorepo::Cli::Configuration do
   let(:conf) { Nicorepo::Cli::Configuration.new }
 
   before do
-    Nicorepo::Cli::Configuration.any_instance.stub(:load_config).and_return(config_values)
+    allow_any_instance_of(Nicorepo::Cli::Configuration).to receive(:load_config).and_return(config_values)
   end
 
   describe "#request_num" do
@@ -15,7 +15,7 @@ describe Nicorepo::Cli::Configuration do
 
           it "should return default request_num" do
             default_request_num = conf.send(:defaults)["request_num"]["general"]
-            conf.request_num("all").should eq(default_request_num)
+            expect(conf.request_num("all")).to eq(default_request_num)
           end
         end
 
@@ -24,7 +24,7 @@ describe Nicorepo::Cli::Configuration do
           let(:config_values) { { "request_num" => { "general" => general_request_num } } }
 
           it "should return defined 'general' request_num" do
-            conf.request_num("all").should eq(general_request_num)
+            expect(conf.request_num("all")).to eq(general_request_num)
           end
         end
       end
@@ -35,7 +35,7 @@ describe Nicorepo::Cli::Configuration do
           let(:config_values) { { "request_num" => { "all" => all_request_num } } }
 
           it "should return defined 'all' request_num" do
-            conf.request_num("all").should eq(all_request_num)
+            expect(conf.request_num("all")).to eq(all_request_num)
           end
         end
 
@@ -45,7 +45,7 @@ describe Nicorepo::Cli::Configuration do
           let(:config_values) { { "request_num" => { "all" => all_request_num, "general" => general_request_num } } }
 
           it "should return defined 'all' request_num" do
-            conf.request_num("all").should eq(all_request_num)
+            expect(conf.request_num("all")).to eq(all_request_num)
           end
         end
       end
@@ -61,7 +61,7 @@ describe Nicorepo::Cli::Configuration do
           let(:config_values) { { "limit_page" => { "all" => all_limit_page, "general" => general_limit_page } } }
 
           it "should return defined 'all' limit_page" do
-            conf.limit_page("all").should eq(all_limit_page)
+            expect(conf.limit_page("all")).to eq(all_limit_page)
           end
         end
       end

@@ -10,7 +10,7 @@ describe Nicorepo do
   describe "#login" do
     context "with right account" do
       it "should be success" do
-        @nicorepo.agent.should be_true
+        expect(@nicorepo.agent).to be_truthy
       end
     end
 
@@ -25,13 +25,13 @@ describe Nicorepo do
   describe "#all" do
     context "with 5" do
       it "should return 5 reports" do
-        @nicorepo.all(5).should have(5).reports
+        expect(@nicorepo.all(5).size).to eq(5)
       end
     end
 
     context "with 50" do
       it "should return 50 reports" do
-        @nicorepo.all(50).should have(50).reports
+        expect(@nicorepo.all(50).size).to eq(50)
       end
     end
   end
@@ -41,11 +41,11 @@ describe Nicorepo do
       it "should return only video reports" do
         videos = @nicorepo.videos
         not_videos = videos.reject{ |v| v.kind =~ /video/ }
-        not_videos.size.should eq 0
+        expect(not_videos.size).to eq(0)
       end
 
       it "should return 5 reports at the most" do
-        @nicorepo.videos(5, 3).should have_at_most(5).reports
+        expect(@nicorepo.videos(5, 3).size).to be <= 5
       end
     end
   end
@@ -54,7 +54,7 @@ describe Nicorepo do
     it "should return only live reports" do
       lives = @nicorepo.lives
       not_lives = lives.reject{ |l| l.kind =~ /live/ }
-      not_lives.size.should eq 0
+      expect(not_lives.size).to eq(0)
     end
   end
 end
