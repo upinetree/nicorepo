@@ -28,6 +28,8 @@ class Nicorepo
         kind:   parse_kind(node),
         date:   parse_date(node)
       }
+    rescue => e
+      error_report(node, e)
     end
 
     def report_nodes(page)
@@ -69,6 +71,17 @@ class Nicorepo
     def parse_date(node)
       d = node.search('div.log-footer/div.log-footer-inner/a.log-footer-date/time').first['datetime']
       Time.xmlschema(d).localtime
+    end
+
+    def error_report(node, e)
+      {
+        body:   node.inner_html.gsub(/\r|\n|\t/, ''),
+        title:  "An exception occured: #{e.message}",
+        url:    '',
+        author: '',
+        kind:   '',
+        date:   ''
+      }
     end
   end
 end
