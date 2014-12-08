@@ -34,6 +34,17 @@ describe Nicorepo do
         expect(@nicorepo.all(50).size).to eq(50)
       end
     end
+
+    context "when an error occured" do
+      before do
+        allow_any_instance_of(Nicorepo::Parser).to receive(:parse_title).and_raise("SomeError")
+      end
+
+      it "should return erorr reports" do
+        error_report = @nicorepo.all(1).first
+        expect(error_report.title).to eq("An exception occured: SomeError")
+      end
+    end
   end
 
   describe "#videos" do
