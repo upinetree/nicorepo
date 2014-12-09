@@ -2,6 +2,8 @@ class Nicorepo
   class Report
     attr_accessor :body, :title, :url, :author, :kind, :date
 
+    ERROR_KIND = 'error'
+
     def initialize(attrs)
       @body   = attrs[:body]
       @title  = attrs[:title]

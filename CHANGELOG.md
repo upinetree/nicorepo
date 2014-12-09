@@ -1,3 +1,7 @@
+## 0.0.7 (HEAD)
+
+* Output error reports when exceptions occurd in the parsing process.
+
 ## 0.0.6 (2014/10/18)
 
 * Disable SSLv3 and use TLSv1 because of POODLE vulnerability

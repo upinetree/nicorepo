@@ -47,7 +47,7 @@ class Nicorepo
         reach_oldest_page = (reports.last.date < filter[:since])
         reports.reject! { |report| report.date < filter[:since] }
       end
-      reports.select! { |report| report.kind =~ /#{filter[:kind]}/ } if filter[:kind]
+      reports.select! { |report| report.kind =~ /#{filter[:kind]}|#{Report::ERROR_KIND}/ } if filter[:kind]
 
       return reports[0, request_num] if reports.size >= request_num
       return reports if filter[:since] && reach_oldest_page

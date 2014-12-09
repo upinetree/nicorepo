@@ -79,7 +79,7 @@ class Nicorepo
         title:  "An exception occured: #{e.message}",
         url:    '',
         author: '',
-        kind:   '',
+        kind:   Report::ERROR_KIND,
         date:   ''
       }
     end
