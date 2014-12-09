@@ -1,4 +1,4 @@
-## 0.0.7 (HEAD)
+## 0.0.7 (2014/12/09)
 
 * Output error reports when exceptions occurd in the parsing process.
 
