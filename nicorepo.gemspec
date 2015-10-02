@@ -6,7 +6,7 @@ Gem::Specification.new do |spec|
   spec.name          = "nicorepo"
   spec.version       = Nicorepo::VERSION
   spec.authors       = ["upinetree"]
-  spec.email         = ["essequake@gmail.com"]
+  spec.email         = ["upinetree@gmail.com"]
   spec.summary       = %q{Simple nicorepo scraper}
   spec.description   = %q{Scrapes and filters nicorepo reports from nicovideo.}
   spec.homepage      = "https://github.com/upinetree/nicorepo"
