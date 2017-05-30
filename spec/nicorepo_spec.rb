@@ -14,7 +14,7 @@ describe Nicorepo do
       end
 
       it "should return erorr reports" do
-        expect(report.title).to eq("An exception occured: SomeError")
+        expect(report.title).to include("An exception occured: SomeError")
       end
     end
   end
