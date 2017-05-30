@@ -76,7 +76,7 @@ class Nicorepo
     def error_report(node, e)
       {
         body:   node.inner_html.gsub(/\r|\n|\t/, ''),
-        title:  "An exception occured: #{e.message}",
+        title:  "An exception occured: #{e.message}\n#{e.backtrace}",
         url:    '',
         author: '',
         kind:   Report::ERROR_KIND,
