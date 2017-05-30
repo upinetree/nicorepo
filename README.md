@@ -39,7 +39,7 @@ machine nicovideo.jp
 And set the permission if not yet.
 
 ```console
-$ chmod 600 ~/.netrc
+$ chmod 0600 ~/.netrc
 ```
 
 ### Start nicorepo cli
