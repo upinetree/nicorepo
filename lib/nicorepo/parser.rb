@@ -69,7 +69,7 @@ class Nicorepo
     end
 
     def parse_date(node)
-      d = node.search('div.log-footer/div.log-footer-inner/a.log-footer-date/time').first['datetime']
+      d = node.search('.log-footer-date/time').first['datetime']
       Time.xmlschema(d).localtime
     end
 
