@@ -36,6 +36,12 @@ machine nicovideo.jp
   password your-password
 ```
 
+And set the permission if not yet.
+
+```console
+$ chmod 600 ~/.netrc
+```
+
 ### Start nicorepo cli
 
     $ nicorepo
