@@ -33,27 +33,27 @@ class Nicorepo
     end
 
     def report_nodes(page)
-      page.search('div.timeline/div.log')
+      page.search('.timeline/.log')
     end
 
     def next_url(page)
-      page.search('a.next-page-link').first['href']
+      page.search('.next-page-link').first['href']
     end
 
     def parse_body(node)
-      node.search('div.log-body').first.inner_text.gsub(/(\t|\r|\n)/, "")
+      node.search('.log-body').first.inner_text.gsub(/(\t|\r|\n)/, "")
     end
 
     def parse_title(node)
-      node.search('div.log-target-info/a').first.inner_text
+      node.search('.log-target-info/a').first.inner_text
     end
 
     def parse_url(node)
-      node.search('div.log-target-info/a').first['href']
+      node.search('.log-target-info/a').first['href']
     end
 
     def parse_author(node)
-      node.search('div.log-body/a').first.inner_text
+      node.search('.log-body/a').first.inner_text
     end
 
     # example: 'log.log-community-video-upload' -> 'community-video-upload'
