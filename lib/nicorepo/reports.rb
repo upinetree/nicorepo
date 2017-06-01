@@ -1,3 +1,5 @@
+# TODO: Romove in next version
+
 require 'nicorepo/report'
 require 'forwardable'
 

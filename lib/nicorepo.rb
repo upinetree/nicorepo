@@ -1,52 +1,49 @@
-require 'mechanize'
-require 'nicorepo/reports'
-require 'nicorepo/parser'
+require 'nicorepo/filter'
+require 'nicorepo/page'
+
+require 'netrc'
 
 class Nicorepo
-  class LoginError < StandardError; end
+  PER_PAGE = 25
+  MAX_PAGES_DEFAULT = 20
 
-  PER_PAGE = 20
-  LOGIN_URL = 'https://secure.nicovideo.jp/secure/login?site=niconico'
-
-  attr_reader :agent
-
-  def initialize
-    @agent = Mechanize.new
-    @agent.ssl_version = 'TLSv1'
-    @agent.request_headers = { 'accept-language' => 'ja-JP', 'content-language' => 'ja-JP' }
-    @parser = Parser.new(@agent)
-    @logined = false
+  def session
+    # TODO: handle expiration
+    @session ||= (
+      mail, pass = Netrc.read["nicovideo.jp"]
+      Nicorepo::Client::Auth.new.login(mail, pass)
+    )
   end
 
-  def login(mail, pass)
-    page = @agent.post(LOGIN_URL, mail: mail, password: pass)
-    if page.header["x-niconico-authflag"] == '0'
-      raise LoginError, "Failed to login"
-    else
-      @logined = true
-    end
+  def all(request_num = PER_PAGE, params = {})
+    params = params.merge(max_pages: request_num / PER_PAGE + 1)
+
+    fetch(:all, request_num, params)
   end
 
-  def logined?
-    # TODO: page.header["x-niconico-auth-flag"] をチェックする？
-    #       現状一度ログインしたらfalseにならない
-    @logined
+  def videos(request_num, params = {})
+    fetch(:videos, request_num, params)
   end
 
-  def all(request_num = PER_PAGE, since: nil)
-    limit_page = request_num / PER_PAGE + 1
-    Reports.new(@parser).fetch(request_num, limit_page, since: since)
+  def lives(request_num, params = {})
+    fetch(:lives, request_num, params)
   end
 
-  def videos(request_num = 3, limit_page = 5, since: nil)
-    VideoReports.new(@parser).fetch(request_num, limit_page, since: since)
-  end
+  def fetch(filter_type, request_num, params = {})
+    max_pages = params.delete(:max_pages) || MAX_PAGES_DEFAULT
+    filter = Nicorepo::Filter.generate(filter_type)
+    page = Nicorepo::Page.new(session, filter)
 
-  def lives(request_num = 3, limit_page = 5, since: nil)
-    LiveReports.new(@parser).fetch(request_num, limit_page, since: since)
+    reports =
+      max_pages.times.each_with_object([]) do |_, reports|
+        break reports if reports.size >= request_num
+
+        reports.concat(page.reports)
+        page = page.next
+      end
+
+    reports[0, request_num]
   end
 end
 
-require 'nicorepo/cli/cli'
 require "nicorepo/version"
-
