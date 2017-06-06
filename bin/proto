@@ -6,7 +6,7 @@ require 'pry'
 require_relative '../lib/nicorepo'
 
 nicorepo = Nicorepo.new
-reports = nicorepo.videos(5)
+report = nicorepo.videos(5)
 binding.pry
 
 
@@ -15,7 +15,7 @@ binding.pry
 # nico.videos(10, since: '2017-05-01', order: :asc)
 # nico.fetch(:videos, 10, max_id: 'xxxxxxxxxxxxxxxxxxxxxx')
 # nico.fetch(/user\.video/, 10)
-# 
+#
 # report = nico.videos(10, max_page: 100)
 # report.json
 # => [{...}, {...}, ...]
@@ -26,6 +26,3 @@ binding.pry
 #   info: '長いゆで卵を作ってみた'
 # }]
 #
-# 状態はセッションオブジェクトに持たせる？
-# module Nicorepo
-# session = Nicorepo::Session.start

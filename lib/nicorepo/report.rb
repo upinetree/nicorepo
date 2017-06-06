@@ -1,16 +1,30 @@
 class Nicorepo
   class Report
-    attr_accessor :body, :title, :url, :author, :kind, :date
+    attr_reader :pages
 
-    ERROR_KIND = 'error'
+    def initialize(request_num)
+      @pages = []
+      @request_num = request_num
+    end
 
-    def initialize(attrs)
-      @body   = attrs[:body]
-      @title  = attrs[:title]
-      @url    = attrs[:url]
-      @author = attrs[:author]
-      @kind   = attrs[:kind]
-      @date   = attrs[:date]
+    def push(page)
+      @pages.push(page)
+    end
+
+    def size
+      raw.size
+    end
+
+    def raw
+      @pages.map(&:raw)[0, @request_num]
+    end
+
+    def format(formatter = DefaultFormatter)
+      formatter.process(raw)
+    end
+
+    class DefaultFormatter
+      # to be implemented
     end
   end
 end

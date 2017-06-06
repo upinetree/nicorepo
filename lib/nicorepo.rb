@@ -1,5 +1,7 @@
+require 'nicorepo/client'
 require 'nicorepo/filter'
 require 'nicorepo/page'
+require 'nicorepo/report'
 
 require 'netrc'
 
@@ -11,7 +13,7 @@ class Nicorepo
     # TODO: handle expiration
     @session ||= (
       mail, pass = Netrc.read["nicovideo.jp"]
-      Nicorepo::Client::Auth.new.login(mail, pass)
+      Client::Auth.new.login(mail, pass)
     )
   end
 
@@ -31,18 +33,15 @@ class Nicorepo
 
   def fetch(filter_type, request_num, params = {})
     max_pages = params.delete(:max_pages) || MAX_PAGES_DEFAULT
-    filter = Nicorepo::Filter.generate(filter_type)
-    page = Nicorepo::Page.new(session, filter)
+    filter = Filter.generate(filter_type)
+    page = Page.new(session, filter)
 
-    reports =
-      max_pages.times.each_with_object([]) do |_, reports|
-        break reports if reports.size >= request_num
+    max_pages.times.each_with_object(Report.new(request_num)) do |_, report|
+      report.push(page)
+      break report if report.size >= request_num
 
-        reports.concat(page.reports)
-        page = page.next
-      end
-
-    reports[0, request_num]
+      page = page.next
+    end
   end
 end
 
