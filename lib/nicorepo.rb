@@ -1,4 +1,4 @@
-require 'nicorepo/client'
+require 'nicorepo/request'
 require 'nicorepo/filter'
 require 'nicorepo/page'
 require 'nicorepo/report'
@@ -13,7 +13,7 @@ class Nicorepo
     # TODO: handle expiration
     @session ||= (
       mail, pass = Netrc.read["nicovideo.jp"]
-      Client::Auth.new.login(mail, pass)
+      Request::Auth.new.login(mail, pass)
     )
   end
 

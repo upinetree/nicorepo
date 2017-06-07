@@ -1,4 +1,4 @@
-require 'nicorepo/client'
+require 'nicorepo/request'
 
 class Nicorepo
   class Page
@@ -21,7 +21,7 @@ class Nicorepo
     private
 
     def fetch
-      json = Client::Timeline.fetch(@session, cursor: @cursor)
+      json = Request::Timeline.fetch(@session, cursor: @cursor)
 
       @next_cursor = json['meta']['minId']
       @raw = json['data'].select { |r| @filter.accepts?(r['topic']) }

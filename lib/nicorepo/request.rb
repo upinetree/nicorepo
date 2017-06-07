@@ -3,7 +3,7 @@ require 'cgi'
 require 'openssl'
 
 class Nicorepo
-  module Client
+  module Request
     class Auth
       class LoginError < StandardError; end
 
