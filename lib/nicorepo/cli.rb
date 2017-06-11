@@ -1,8 +1,9 @@
+require 'nicorepo'
+require 'nicorepo/cli/config'
+
 require 'thor'
-require 'netrc'
 require 'launchy'
 require 'readline'
-require 'nicorepo/cli/config'
 
 class Nicorepo
   module Cli
@@ -21,24 +22,9 @@ class Nicorepo
       class ReportExistenceError < StandardError; end
 
       class << self
-        def start(*)
-          login unless repo.logined?
-          super
-        end
-
         # replaces by a blank for help because Interactor dosen't require the basename
         def basename
           ''
-        end
-
-        def login
-          mail, pass = Netrc.read["nicovideo.jp"]
-          raise LoginAccountError, "machine nicovideo.jp is not defined in .netrc" if mail.nil? || pass.nil?
-          begin
-            repo.login(mail, pass)
-          rescue
-            raise LoginAccountError, "invalid mail or pass: mail = #{mail}"
-          end
         end
 
         def repo
@@ -54,9 +40,9 @@ class Nicorepo
         end
       end
 
-      desc "login", "re-login if your session is expired"
-      def login
-        login
+      desc "reset_session", "reset current session and try re-login at the next access. It is useful if your session is expired"
+      def reset_session
+        @repo.reset_session
       end
 
       desc "all", "fetch all reports"
@@ -80,8 +66,8 @@ class Nicorepo
       def videos
         request_num = options[:"request-num"] || conf.request_num("videos")
         limit_page  = options[:"limit-page"]  || conf.limit_page("videos")
-        request_options = { since: parse_since_options(options) }
-        cache(repo.videos(request_num, limit_page, request_options))
+        request_options = { limit_page: limit_page, since: parse_since_options(options) }
+        cache(repo.videos(request_num, request_options))
         show
       end
 
@@ -94,24 +80,29 @@ class Nicorepo
       def lives
         request_num = options[:"request-num"] || conf.request_num("lives")
         limit_page  = options[:"limit-page"]  || conf.limit_page("lives")
-        request_options = { since: parse_since_options(options) }
-        cache(repo.lives(request_num, limit_page, request_options))
+        request_options = { limit_page: limit_page, since: parse_since_options(options) }
+        cache(repo.lives(request_num, request_options))
         show
       end
 
       desc "show", "show current reports"
       option :more, type: :boolean, aliases: :m
       def show
-        showed_reports = options[:more] ? cached_reports : cached_reports[0, recent_tail]
-        showed_reports.each.with_index(1) do |report, i|
+        if cached_reports.size == 0
+          say "* No reports", :red
+          return
+        end
+
+        reports = options[:more] ? cached_reports : cached_reports[0, recent_tail]
+        reports.each.with_index(1) do |report, i|
           say "--- MORE ---", :blue if i == recent_tail + 1
-          say "[#{i}] #{report.body} at #{report.date.to_s}"
-          say "     #{report.title} (#{report.url})", :green
+          say "[#{i}] #{report[:topic]} from: #{report[:sender]} at: #{report[:created_at]}"
+          say "    #{report[:title]} (#{report[:url]})", :green
         end
         say "* last fetch time: #{cached_at}", :blue
       end
 
-      desc "open REPORT-NUMBER", "open the report url specified by number in your browser"
+      desc "open REPORT-NUMBER", "open the url in your browser. REPORT-NUMBER is shown in left of each report"
       def open(report_number)
         open_numbered_link(report_number.to_i)
       end
@@ -132,7 +123,7 @@ class Nicorepo
       end
 
       def cached_reports
-        self.class.cache[:reports] ||= []
+        self.class.cache[:report] ||= []
       end
 
       def recent_tail
@@ -143,9 +134,9 @@ class Nicorepo
         self.class.cache[:cached_at]
       end
 
-      def cache(reports)
-        cached_reports.unshift(reports).flatten!
-        self.class.cache[:recent_tail] = reports.size
+      def cache(new_report)
+        cached_reports.unshift(*new_report.format)
+        self.class.cache[:recent_tail] = new_report.size
         self.class.cache[:cached_at] = Time.now
       end
 
@@ -162,12 +153,16 @@ class Nicorepo
         end
       end
 
-      def open_numbered_link(request_num)
-        url = cached_reports[request_num - 1].url
-        raise ReportExistenceError, "report existence error: please fetch reports" if url.nil?
+      def open_numbered_link(num)
+        if num > cached_reports.size || num < 1
+          say "Unavailable report number", :red
+          return
+        end
+
+        url = cached_reports[num - 1][:url]
 
         Launchy.open(url, options) do |exception|
-          puts "Attempted to open #{url} and failed because #{exception}"
+          puts "Attempted to open #{url} but failed because of #{exception}"
           raise exception
         end
       end

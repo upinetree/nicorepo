@@ -3,11 +3,12 @@
 require 'bundler/setup'
 require 'pry'
 
-require_relative '../lib/nicorepo'
+require_relative '../lib/nicorepo/cli'
 
-nicorepo = Nicorepo.new
-report = nicorepo.videos(5)
-binding.pry
+Nicorepo::Cli::Runner.run
+# nicorepo = Nicorepo.new
+# report = nicorepo.videos(5)
+# binding.pry
 
 
 # nico = Nicorepo.new

@@ -13,6 +13,7 @@ class Nicorepo
     # TODO: handle expiration
     @session ||= (
       mail, pass = Netrc.read["nicovideo.jp"]
+      raise LoginAccountError, "mail and password is not defined in .netrc as a machine nicovideo.jp" if mail.nil? || pass.nil?
       Request::Auth.new.login(mail, pass)
     )
   end
@@ -22,7 +23,7 @@ class Nicorepo
   end
 
   def all(request_num = PER_PAGE, params = {})
-    params = params.merge(max_pages: request_num / PER_PAGE + 1)
+    params = params.merge(limit_page: request_num / PER_PAGE + 1)
 
     fetch(:all, request_num, params)
   end
@@ -36,11 +37,11 @@ class Nicorepo
   end
 
   def fetch(filter_type, request_num, params = {})
-    max_pages = params.delete(:max_pages) || MAX_PAGES_DEFAULT
+    limit_page = params.delete(:limit_page) || MAX_PAGES_DEFAULT
     filter = Filter.generate(filter_type)
     page = Page.new(session, filter)
 
-    max_pages.times.each_with_object(Report.new(request_num)) do |_, report|
+    limit_page.times.each_with_object(Report.new(request_num)) do |_, report|
       report.push(page)
       break report if report.size >= request_num
 

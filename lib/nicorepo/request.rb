@@ -23,7 +23,7 @@ class Nicorepo
         session_cookie = cookies.detect { |c|
           c['user_session']&.size > 0 && c['user_session'] != ['deleted']
         }
-        fail LoginError unless session_cookie
+        fail LoginError, "invalid mail or password: mail => #{mail}" unless session_cookie
 
         @session = session_cookie.fetch('user_session').first
       end

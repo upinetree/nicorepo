@@ -7,8 +7,10 @@ class Nicorepo
       @request_num = request_num
     end
 
-    def push(page)
-      @pages.push(page)
+    def push(page_or_pages)
+      pages = (page_or_pages.is_a?(Array) ? page_or_pages : [page_or_pages]).compact
+      @pages.push(*pages)
+      self
     end
 
     def size
@@ -20,25 +22,28 @@ class Nicorepo
     end
 
     def format(formatter = DefaultFormatter)
-      formatter.process(raw)
+      formatter.process_all(raw)
     end
 
     class DefaultFormatter
       require 'time'
 
       class << self
-        def process(raw)
-          raw.map do |h|
-            title, url = infer_body(h)
+        def process_all(raw)
+          raw.map { |h| process(h) }.compact
+        end
 
-            {
-              sender: nickname(h),
-              topic: topic(h),
-              title: title,
-              link: url,
-              created_at: created_at(h)
-            }
-          end
+        def process(h)
+          return unless h
+
+          title, url = infer_body(h)
+          {
+            sender: nickname(h),
+            topic: topic(h),
+            title: title,
+            url: url,
+            created_at: created_at(h)
+          }
         end
 
         private

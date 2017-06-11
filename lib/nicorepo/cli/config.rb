@@ -8,7 +8,7 @@ class Nicorepo
 
       def initialize
         params = defaults.merge(load_config)
-        @request_nums  = params["request_num"]
+        @request_nums = params["request_num"]
         @limit_pages = params["limit_page"]
       end
 
@@ -35,7 +35,7 @@ class Nicorepo
             "general" => 10
           },
           "limit_page" => {
-            "general" => 3
+            "general" => 10
           }
         }
       end
