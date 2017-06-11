@@ -17,6 +17,10 @@ class Nicorepo
     )
   end
 
+  def reset_session
+    @session = nil
+  end
+
   def all(request_num = PER_PAGE, params = {})
     params = params.merge(max_pages: request_num / PER_PAGE + 1)
 
