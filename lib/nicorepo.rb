@@ -36,10 +36,14 @@ class Nicorepo
     fetch(:lives, request_num, params)
   end
 
+  # @params
+  #   * limit_page - Integer
+  #   * from - Time or String
   def fetch(filter_type, request_num, params = {})
-    limit_page = params.delete(:limit_page) || MAX_PAGES_DEFAULT
+    limit_page = params[:limit_page] || MAX_PAGES_DEFAULT
+    cursor = cursor_from_time(params[:from])
     filter = Filter.generate(filter_type)
-    page = Page.new(session, filter)
+    page = Page.new(session, filter, cursor)
 
     limit_page.times.each_with_object(Report.new(request_num)) do |_, report|
       report.push(page)
@@ -47,6 +51,15 @@ class Nicorepo
 
       page = page.next
     end
+  end
+
+  private
+
+  def cursor_from_time(from)
+    return unless from
+
+     from = Time.parse(params[:from]) if from === String
+     (from.to_f * 1000).floor
   end
 end
 
