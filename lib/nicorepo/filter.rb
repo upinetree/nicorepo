@@ -1,24 +1,24 @@
 class Nicorepo
   module Filter
-    module_function def generate(type_or_topic, params = {})
+    module_function def generate(type_or_topic, options = {})
       case type_or_topic
       when :all
-        Nicorepo::Filter::All.new(params)
+        Nicorepo::Filter::All.new(options)
       when :videos
-        Nicorepo::Filter::Equal.new('nicovideo.user.video.upload', params)
+        Nicorepo::Filter::Equal.new('nicovideo.user.video.upload', options)
       when :lives
-        Nicorepo::Filter::Match.new(/^live/, params)
+        Nicorepo::Filter::Match.new(/^live/, options)
       when String
-        Nicorepo::Filter::Equal.new(type_or_topic, params)
+        Nicorepo::Filter::Equal.new(type_or_topic, options)
       when Regex
-        Nicorepo::Filter::Match.new(type_or_topic, params)
+        Nicorepo::Filter::Match.new(type_or_topic, options)
       else
         fail "Given type or topic #{type_or_topic} is not supported"
       end
     end
 
     class All
-      def initialize(params)
+      def initialize(options)
       end
 
       def accepts?(_topic)
@@ -27,7 +27,7 @@ class Nicorepo
     end
 
     class Equal
-      def initialize(topic, params)
+      def initialize(topic, options)
         @topic = topic
       end
 
@@ -37,7 +37,7 @@ class Nicorepo
     end
 
     class Match
-      def initialize(topic_regexp, params)
+      def initialize(topic_regexp, options)
         @topic_regexp = topic_regexp
       end
 

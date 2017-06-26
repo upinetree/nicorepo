@@ -22,26 +22,36 @@ class Nicorepo
     @session = nil
   end
 
-  def all(request_num = PER_PAGE, params = {})
-    params = params.merge(limit_page: request_num / PER_PAGE + 1)
+  def all(request_num = PER_PAGE, options = {})
+    options = options.merge(limit_page: request_num / PER_PAGE + 1)
 
-    fetch(:all, request_num, params)
+    fetch(:all, request_num, options)
   end
 
-  def videos(request_num, params = {})
-    fetch(:videos, request_num, params)
+  def videos(request_num, options = {})
+    fetch(:videos, request_num, options)
   end
 
-  def lives(request_num, params = {})
-    fetch(:lives, request_num, params)
+  def lives(request_num, options = {})
+    fetch(:lives, request_num, options)
   end
 
-  # @params
-  #   * limit_page - Integer
-  #   * from - Time or String
-  def fetch(filter_type, request_num, params = {})
-    limit_page = params[:limit_page] || MAX_PAGES_DEFAULT
-    cursor = cursor_from_time(params[:from])
+  # === Params
+  #
+  # * limit_page - Integer
+  # * request_num - Integer
+  # * options - Hash
+  #
+  # === Options
+  #
+  # * from - Time or String
+  # * to - Time or String
+  #
+  # fetch `from` newer `to` older reports
+  #
+  def fetch(filter_type, request_num, options = {})
+    limit_page = options[:limit_page] || MAX_PAGES_DEFAULT
+    cursor = cursor_from_time(options[:from])
     filter = Filter.generate(filter_type)
     page = Page.new(session, filter, cursor)
 
@@ -58,7 +68,7 @@ class Nicorepo
   def cursor_from_time(from)
     return unless from
 
-     from = Time.parse(params[:from]) if from === String
+     from = Time.parse(options[:from]) if from === String
      (from.to_f * 1000).floor
   end
 end
