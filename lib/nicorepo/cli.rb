@@ -52,7 +52,7 @@ class Nicorepo
       option :"hours", type: :numeric, aliases: :h
       def all
         request_num = options[:"request-num"] || conf.request_num("all")
-        request_options = { since: parse_since_options(options) }
+        request_options = { to: parse_time_options(options) }
         cache(repo.all(request_num, request_options))
         show
       end
@@ -66,7 +66,7 @@ class Nicorepo
       def videos
         request_num = options[:"request-num"] || conf.request_num("videos")
         limit_page  = options[:"limit-page"]  || conf.limit_page("videos")
-        request_options = { limit_page: limit_page, since: parse_since_options(options) }
+        request_options = { limit_page: limit_page, to: parse_time_options(options) }
         cache(repo.videos(request_num, request_options))
         show
       end
@@ -80,7 +80,7 @@ class Nicorepo
       def lives
         request_num = options[:"request-num"] || conf.request_num("lives")
         limit_page  = options[:"limit-page"]  || conf.limit_page("lives")
-        request_options = { limit_page: limit_page, since: parse_since_options(options) }
+        request_options = { limit_page: limit_page, to: parse_time_options(options) }
         cache(repo.lives(request_num, request_options))
         show
       end
@@ -140,7 +140,7 @@ class Nicorepo
         self.class.cache[:cached_at] = Time.now
       end
 
-      def parse_since_options(options)
+      def parse_time_options(options)
         case
         when options[:latest]
           cached_at

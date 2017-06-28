@@ -25,6 +25,10 @@ class Nicorepo
       formatter.process_all(raw)
     end
 
+    def reach_request_num?
+      size >= @request_num
+    end
+
     class DefaultFormatter
       require 'time'
 

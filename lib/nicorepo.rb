@@ -47,29 +47,20 @@ class Nicorepo
   # * from - Time or String
   # * to - Time or String
   #
-  # fetch `from` newer `to` older reports
+  # fetch reports `:from` newer `:to` older
   #
   def fetch(filter_type, request_num, options = {})
     limit_page = options[:limit_page] || MAX_PAGES_DEFAULT
-    cursor = cursor_from_time(options[:from])
-    filter = Filter.generate(filter_type)
-    page = Page.new(session, filter, cursor)
+    filter = Filter.new(filter_type, min_time: options[:to])
+    page = Page.new(session, filter, options[:from], options[:to])
 
+    # NOTE: filter は report に渡したほうがシンプルじゃない？
     limit_page.times.each_with_object(Report.new(request_num)) do |_, report|
       report.push(page)
-      break report if report.size >= request_num
+      break report if page.last_page? || report.reach_request_num?
 
       page = page.next
     end
-  end
-
-  private
-
-  def cursor_from_time(from)
-    return unless from
-
-     from = Time.parse(options[:from]) if from === String
-     (from.to_f * 1000).floor
   end
 end
 
