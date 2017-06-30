@@ -1,6 +1,6 @@
 require 'yaml'
 
-class Nicorepo
+module Nicorepo
   module Cli
     class Configuration
 

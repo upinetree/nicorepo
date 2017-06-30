@@ -1,4 +1,4 @@
-class Nicorepo
+module Nicorepo
   class Filter
     def initialize(type_or_topic, options = {})
       @rules = [].tap do |r|

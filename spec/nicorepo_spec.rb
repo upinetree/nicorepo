@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Nicorepo do
   before(:all) do
     mail, pass = Netrc.read["nicovideo.jp"]
-    @nicorepo = Nicorepo.new
+    @nicorepo = Nicorepo::Client.new
     @nicorepo.login(mail, pass)
   end
 
@@ -28,7 +28,7 @@ describe Nicorepo do
 
     context "with wrong account" do
       it "should raise error" do
-        repo = Nicorepo.new
+        repo = Nicorepo::Client.new
         expect{ repo.login('test', 'testpass') }.to raise_error(Nicorepo::LoginError)
       end
     end

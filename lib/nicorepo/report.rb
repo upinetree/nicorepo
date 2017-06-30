@@ -1,4 +1,4 @@
-class Nicorepo
+module Nicorepo
   class Report
     attr_reader :pages
 

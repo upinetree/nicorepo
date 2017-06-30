@@ -2,7 +2,7 @@ require 'net/http'
 require 'cgi'
 require 'openssl'
 
-class Nicorepo
+module Nicorepo
   module Request
     class Auth
       class LoginError < StandardError; end

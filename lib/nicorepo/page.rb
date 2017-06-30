@@ -1,6 +1,4 @@
-require 'nicorepo/request'
-
-class Nicorepo
+module Nicorepo
   class Page
     attr_reader :raw
 

@@ -5,7 +5,7 @@ require 'thor'
 require 'launchy'
 require 'readline'
 
-class Nicorepo
+module Nicorepo
   module Cli
     class Runner
       def self.run
@@ -28,7 +28,7 @@ class Nicorepo
         end
 
         def repo
-          @repo ||= Nicorepo.new
+          @repo ||= Nicorepo::Client.new
         end
 
         def conf
