@@ -1,5 +1,5 @@
 require 'nicorepo'
-require 'nicorepo/cli/config'
+require 'nicorepo/cli/configuration'
 
 require 'thor'
 require 'launchy'
