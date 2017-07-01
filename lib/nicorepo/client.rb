@@ -2,6 +2,8 @@ require 'netrc'
 
 module Nicorepo
   class Client
+    class AccountLackError < StandardError; end
+
     PER_PAGE = 25
     MAX_PAGES_DEFAULT = 20
 
@@ -9,7 +11,7 @@ module Nicorepo
       # TODO: handle expiration
       @session ||= (
         mail, pass = Netrc.read["nicovideo.jp"]
-        raise LoginAccountError, "mail and password is not defined in .netrc as a machine nicovideo.jp" if mail.nil? || pass.nil?
+        raise AccountLackError, "mail and password is not defined in .netrc as a machine nicovideo.jp" if mail.nil? || pass.nil?
         Request::Auth.new.login(mail, pass)
       )
     end

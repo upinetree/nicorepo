@@ -18,9 +18,6 @@ module Nicorepo
     end
 
     class Interactor < Thor
-      class LoginAccountError < StandardError; end
-      class ReportExistenceError < StandardError; end
-
       class << self
         # replaces by a blank for help because Interactor dosen't require the basename
         def basename
