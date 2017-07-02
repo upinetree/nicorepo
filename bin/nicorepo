@@ -1,6 +1,8 @@
 #!/usr/bin/env ruby
 
 require 'bundler/setup'
-require_relative '../lib/nicorepo'
+require 'pry'
+
+require_relative '../lib/nicorepo/cli'
 
 Nicorepo::Cli::Runner.run

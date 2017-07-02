@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'nicorepo/cli'
 
 describe Nicorepo::Cli::Configuration do
   let(:conf) { Nicorepo::Cli::Configuration.new }

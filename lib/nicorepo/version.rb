@@ -1,3 +1,3 @@
-class Nicorepo
-  VERSION = "0.0.8"
+module Nicorepo
+  VERSION = "1.0.0"
 end

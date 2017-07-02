@@ -1,0 +1,53 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://secure.nicovideo.jp/secure/login
+    body:
+      encoding: UTF-8
+      string: mail=account@example.com&password=wrongpassword
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 302
+      message: Found
+    headers:
+      Date:
+      - Sun, 02 Jul 2017 09:39:35 GMT
+      Server:
+      - Apache
+      X-Niconico-Authflag:
+      - '0'
+      - '0'
+      Set-Cookie:
+      - mail_for_retry=account%40example.com; Max-Age=60; Expires=Sun, 02 Jul 2017
+        09:40:35 GMT; Path=/; Domain=.nicovideo.jp; Secure; HTTPOnly
+      - nicosid=1498988375.221363916; expires=Wed, 30-Jun-2027 09:39:35 GMT; Max-Age=315360000;
+        path=/; domain=.nicovideo.jp
+      - nicosid=1498988375.630393974; Max-Age=315360000; Expires=Wed, 30 Jun 2027
+        09:39:35 GMT; Path=/; Domain=.nicovideo.jp
+      X-Niconico-Sid:
+      - '1498988375.221363916'
+      - '1498988375.630393974'
+      Location:
+      - https://account.nicovideo.jp/login?facebook=0&message=login_lock&twitter=0
+      Content-Language:
+      - ja
+      Content-Length:
+      - '0'
+      Connection:
+      - close
+      Content-Type:
+      - text/html; charset=UTF-8
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version: 
+  recorded_at: Sun, 02 Jul 2017 09:39:35 GMT
+recorded_with: VCR 3.0.3
