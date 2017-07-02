@@ -5,12 +5,20 @@ describe Nicorepo::Client do
 
   describe "#login" do
     context "with right account" do
+      around do |example|
+        VCR.use_cassette('login success') { example.run }
+      end
+
       it "should be success" do
         expect(client.session).to be_an_instance_of String
       end
     end
 
     context "with wrong account" do
+      around do |example|
+        VCR.use_cassette('login failure') { example.run }
+      end
+
       before do
         allow_any_instance_of(Netrc).to receive(:[]).and_return(Netrc::Entry.new('account@example.com', 'wrongpassword'))
       end
@@ -34,6 +42,10 @@ describe Nicorepo::Client do
   describe "#all" do
     let(:report) { client.all(request_num) }
 
+    around do |example|
+      VCR.use_cassette('login success') { example.run }
+    end
+
     context "with 5" do
       let(:request_num) { 1 }
 
@@ -54,6 +66,10 @@ describe Nicorepo::Client do
   describe "#videos" do
     let(:report) { client.videos(request_num, limit_page: limit_page) }
     let(:request_num) { 3 }
+
+    around do |example|
+      VCR.use_cassette('login success') { example.run }
+    end
 
     context "with 3" do
       let(:limit_page) { nil }
@@ -81,6 +97,10 @@ describe Nicorepo::Client do
   describe "#lives" do
     let(:report) { client.lives(request_num) }
     let(:request_num) { 3 }
+
+    around do |example|
+      VCR.use_cassette('login success') { example.run }
+    end
 
     it "should return only live logs" do
       not_lives = report.raw.reject{ |h| h['topic'] =~ /live/ }
