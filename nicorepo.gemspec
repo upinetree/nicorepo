@@ -7,8 +7,8 @@ Gem::Specification.new do |spec|
   spec.version       = Nicorepo::VERSION
   spec.authors       = ["upinetree"]
   spec.email         = ["upinetree@gmail.com"]
-  spec.summary       = %q{Simple nicorepo scraper}
-  spec.description   = %q{Scrapes and filters nicorepo reports from nicovideo.}
+  spec.summary       = %q{Simple nicorepo client}
+  spec.description   = %q{Provides a simple API client for Nicorepo (on nicovideo.jp).}
   spec.homepage      = "https://github.com/upinetree/nicorepo"
   spec.license       = "MIT"
 

@@ -1,12 +1,14 @@
 # Nicorepo
 
-Nicorepo is scraper and filter of nicorepo on nicovideo.
+Nicorepo is an (unofficial) API client for Nicorepo on nicovideo.jp
 
-- filter reports by kind of them
-- specify number and pages to fetch reports
-- open url in browser
+- Fetch nicorepo logs
+- Filter them by topics and a period
+- Provides a built-in CLI and commands
 
-It requires ruby 2.0.0.
+## Requirements
+
+- ruby 2.3.0
 
 ## Installation
 
@@ -24,11 +26,27 @@ Or install it yourself as:
 
 ## Usage
 
-### Authentication
+```rb
+client = Nicorepo::Client.new
 
-Nicorepo supports reading netrc file.
+client.all
+# => Returns raw logs wrapped in Nicorepo::Report
 
-Add following lines to your netrc file (`~/.netrc`)
+client.lives(10)
+# => Returns 10 live logs
+
+client.videos(10, from: Time.now - (3600 * 24), to: Time.now - (3600 * 48))
+# => Returns 10 uploaded video logs (at most) within yesterday
+
+client.all.format
+# => Returns an array of logs formatted by Nicorepo::Report::DefaultFormatter
+```
+
+### Authentication for nicovideo.jp
+
+Nicorepo requires your nicovideo account and reads them from the `~/.netrc` file.
+
+Add following lines to your `~/.netrc`.
 
 ```
 machine nicovideo.jp
@@ -42,48 +60,60 @@ And set the permission if not yet.
 $ chmod 0600 ~/.netrc
 ```
 
-### Start nicorepo cli
+### Start Nicorepo CLI
 
-    $ nicorepo
+```console
+$ nicorepo
+```
 
-You can use following commands in interactive cli to fetch nicorepos.
+You can use following commands in interactive cli.
 
 command               | alias | description
 ----------------------|-------|---------------------------------------------------------
-  all                 | a     | fetch all reports
-  videos              | v     | fetch only video reports
-  lives               | li    | fetch only live reports
-  show                | s     | show current reports
+  all                 | a     | fetch all logs
+  videos              | v     | fetch only video logs
+  lives               | li    | fetch only live logs
+  show                | s     | show current logs
   open REPORT-NUMBER  | o     | open the report url specified by number in your browser
   help [COMMAND]      | h     | Describe available commands or one specific command
   login               | lo    | re-login if your session is expired
   exit                | e     | exit interactive prompt
 
-Some commands have specific options `-n, --request-num=N`, `-p, --limit-page=N`.
-For example, if you want 20 video reports by searcing over 5 pages, the command will be,
+If you want only video logs, type `video` command.
 
-    > video -n20 -p5
+    > video
 
 Or you can also use aliases.
 
-    > v -n20 -p5
+    > v
 
-`-n` and `-p` are specifing options.
-You can omit it as you like then each commad uses default value.
+Some commands have options of `-n, --request-num=N` and `-p, --limit-page=N`.
+For example:
+
+    > lives -n20 -p5
+
+It fetches 20 live logs at a most, with limitation of max 5 pages.
+
+If you omit them the default values are used for that. (the defaults are configurable)
 
     > v
-    # => `video -n10 -p3`
+    # => `video -n10 -p10`
     > v -n20
-    # => `video -n20 -p3`
+    # => `video -n20 -p10`
     > v -p5
-    # => `video -n20 -p5`
+    # => `video -n20 -p10`
 
-And also, you can use `-l, --latest`, `-h, --hours`, `-d, --days` options to find reports by the specific period.
+And also, you can use `-l, --latest`, `-h, --hours` and `-d, --days` options to fetch logs in the specific period.
 
     > all -l
-    > lives -h 1
 
-### Configuration
+Collect all logs until reach the last fetched log.
+
+    > lives -h1
+
+Collect live logs until 1 hour ago. 
+
+#### Configuration for CLI
 
 You can configure default `request_num` and `limit_page` by adding `~/.nicorepo.yaml` if you want.
 Please refer the sample `nicorepo/.nicorepo.yaml.sample` or copy it to your home directory.
@@ -100,7 +130,7 @@ limit_page:
 ```
 
 - `general`: used in all commands
-- `all`, `videos`, `lives`: used in each command, has priority than `general`
+- `all`, `videos`, `lives`: used in each command, has higher priority than `general`
 
 ## Contributing
 
